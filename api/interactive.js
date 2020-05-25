@@ -10,6 +10,9 @@ const botAdapter = new SlackAdapter(CONSTANTS.SLACK_APP_OPTIONS);
 
 const handleInteractiveFromSlack = (req, res) => {
   botAdapter.processActivity(req, res, async(context) => {
+    // console.log(context._adapter.slack.views);
+    console.log(context._activity);
+
     const activityType = context._activity.channelData.type;
     const modal = {
       "trigger_id": context._activity.channelData.trigger_id

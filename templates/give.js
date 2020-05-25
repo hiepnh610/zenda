@@ -7,7 +7,12 @@ const giveTemplate = {
   },
   submit: {
     type: 'plain_text',
-    text: 'Submit',
+    text: 'Tặng',
+    emoji: true
+  },
+  close: {
+    type: 'plain_text',
+    text: 'Huỷ bỏ',
     emoji: true
   },
   blocks: [

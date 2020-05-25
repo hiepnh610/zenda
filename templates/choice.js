@@ -3,65 +3,76 @@ const choiceTemplate = {
   callback_id: 'modal-choice-cb',
   title: {
     type: 'plain_text',
-    text: 'Bimbim',
+    text: 'Bimbim'
   },
   close: {
     type: 'plain_text',
     text: 'Huỷ bỏ',
-    emoji: true,
+    emoji: true
   },
   submit: {
     type: 'plain_text',
-    text: 'Gửi',
-    emoji: true,
+    text: 'Chọn',
+    emoji: true
   },
   blocks: [
     {
       type: 'section',
       text: {
         type: 'mrkdwn',
-        text: 'Chương trình tặng thưởng nội bộ.',
+        text: 'Chương trình tặng thưởng nội bộ.'
       },
       accessory: {
         type: 'radio_buttons',
         initial_option: {
           text: {
             type: 'plain_text',
-            text: 'Tặng bimbim.',
+            text: 'Tặng bimbim.'
           },
           value: 'give',
           description: {
             type: 'plain_text',
-            text: 'Tặng bimbim cho đồng nghiệp.',
+            text: 'Tặng bimbim cho đồng nghiệp.'
           },
         },
         options: [
           {
             text: {
               type: 'plain_text',
-              text: 'Tặng bimbim.',
+              text: 'Tặng bimbim.'
             },
             value: 'give',
             description: {
               type: 'plain_text',
-              text: 'Tặng bimbim cho đồng nghiệp.',
+              text: 'Tặng bimbim cho đồng nghiệp.'
             },
           },
           {
             text: {
               type: 'plain_text',
-              text: 'Xem túi đồ.',
+              text: 'Xem túi đồ.'
             },
             value: 'check-bag',
             description: {
               type: 'plain_text',
-              text: 'Xem số lượng bimbim trong túi đồ.',
+              text: 'Xem số lượng bimbim trong túi đồ.'
             },
           },
-        ],
-      },
-    },
-  ],
+          {
+            text: {
+              type: 'plain_text',
+              text: 'Yêu cầu quà tặng.'
+            },
+            value: 'gift-request',
+            description: {
+              type: 'plain_text',
+              text: 'Gửi yêu cầu quà tặng cho BTC.'
+            },
+          }
+        ]
+      }
+    }
+  ]
 };
 
 module.exports = choiceTemplate;
