@@ -23,8 +23,7 @@ const giftRequestTemplate = {
         action_id: 'title',
         placeholder: {
           type: 'plain_text',
-          text: 'Tên quà tặng bạn muốn yêu cầu.',
-          min_length: 0
+          text: 'Tên quà tặng bạn muốn yêu cầu.'
         },
       },
       label: {

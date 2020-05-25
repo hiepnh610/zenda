@@ -1,3 +1,5 @@
+const { RADIO_BUTTONS } = require('../constants');
+
 const choiceTemplate = {
   type: 'modal',
   callback_id: 'modal-choice-cb',
@@ -17,12 +19,8 @@ const choiceTemplate = {
   },
   blocks: [
     {
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: 'Chương trình tặng thưởng nội bộ.'
-      },
-      accessory: {
+      type: 'input',
+      element: {
         type: 'radio_buttons',
         initial_option: {
           text: {
@@ -41,7 +39,7 @@ const choiceTemplate = {
               type: 'plain_text',
               text: 'Tặng bimbim.'
             },
-            value: 'give',
+            value: RADIO_BUTTONS.GIVE,
             description: {
               type: 'plain_text',
               text: 'Tặng bimbim cho đồng nghiệp.'
@@ -52,7 +50,7 @@ const choiceTemplate = {
               type: 'plain_text',
               text: 'Xem túi đồ.'
             },
-            value: 'check-bag',
+            value: RADIO_BUTTONS.CHECK_BAG,
             description: {
               type: 'plain_text',
               text: 'Xem số lượng bimbim trong túi đồ.'
@@ -63,13 +61,17 @@ const choiceTemplate = {
               type: 'plain_text',
               text: 'Yêu cầu quà tặng.'
             },
-            value: 'gift-request',
+            value: RADIO_BUTTONS.GIFT_REQUEST,
             description: {
               type: 'plain_text',
               text: 'Gửi yêu cầu quà tặng cho BTC.'
             },
           }
         ]
+      },
+      label: {
+        type: 'plain_text',
+        text: 'Lựa chọn 1 trong những lựa chọn sau.'
       }
     }
   ]
