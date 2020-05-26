@@ -59,18 +59,26 @@ const handleFormData = (context) => {
 
   if (slackView) {
     const cbId = slackView.callback_id;
+    const slackValues = slackView.state.values;
 
-    if (cbId === CONSTANTS.MODAL_CALLBACK.GIVE) {
-      const slackValues = slackView.state.values;
-      const quantityValue = UTILS.findValue(slackValues, 'value');
-      const selectedUser = UTILS.findValue(slackValues, 'selected_user');
+    switch(cbId) {
+      case CONSTANTS.MODAL_CALLBACK.GIVE:
+        const quantityValue = UTILS.findValue(slackValues, 'value');
+        const selectedUser  = UTILS.findValue(slackValues, 'selected_user');
 
-      const payload = {
-        quantity: quantityValue,
-        selectedUser: selectedUser
-      };
+        const payload = {
+          quantity: quantityValue,
+          selectedUser: selectedUser
+        };
 
-      console.log(payload);
+        console.log(payload);
+
+        break;
+
+      case CONSTANTS.MODAL_CALLBACK.GIFT_REQUEST:
+        console.log(slackValues);
+
+        break;
     }
   }
 };
