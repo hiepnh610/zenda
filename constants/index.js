@@ -1,4 +1,4 @@
-const { MONGODB_URI } = require('./db');
+const { MONGODB_URI, MONGODB_OPTIONS } = require('./db');
 const { PORT } = require('./port');
 const { SLACK_APP_OPTIONS } = require('./slack-options');
 const { SHORTCUT, VIEW_SUBMISSION } = require('./slack-interactive');
@@ -11,5 +11,6 @@ module.exports = {
   SHORTCUT,
   SLACK_APP_OPTIONS,
   VIEW_SUBMISSION,
-  MODAL_CALLBACK
+  MODAL_CALLBACK,
+  MONGODB_OPTIONS
 };

@@ -34,18 +34,16 @@ const showModal = (context) => {
         case CONSTANTS.RADIO_BUTTONS.GIVE:
           modal.view = giveTemplate;
 
-          context._adapter.slack.views.open(modal);
-
           break;
 
         case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
           modal.view = giftRequest
-
-          context._adapter.slack.views.open(modal);
           break;
 
         default:
       }
+
+      context._adapter.slack.views.open(modal);
     }
   }
 };
@@ -71,7 +69,9 @@ const handleFormData = (context) => {
           selectedUser: selectedUser
         };
 
-        console.log(payload);
+        console.log(context);
+
+        // const user = context._adapter.slack.users;
 
         break;
 
