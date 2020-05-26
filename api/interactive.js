@@ -10,40 +10,75 @@ const {
 
 const botAdapter = new SlackAdapter(CONSTANTS.SLACK_APP_OPTIONS);
 
-const handleInteractiveFromSlack = (req, res) => {
-  botAdapter.processActivity(req, res, async(context) => {
-    const activityType = context._activity.channelData.type;
-    const modal = {
-      "trigger_id": context._activity.channelData.trigger_id
-    }
+const showModal = (context) => {
+  const channelData = context._activity.channelData;
+  const activityType = channelData.type;
+  const modal = {
+    "trigger_id": channelData.trigger_id
+  }
 
-    if (activityType === CONSTANTS.SHORTCUT) {
-      modal.view = choiceTemplate;
+  if (activityType === CONSTANTS.SHORTCUT) {
+    modal.view = choiceTemplate;
 
-      context._adapter.slack.views.open(modal);
-    }
+    context._adapter.slack.views.open(modal);
+  }
 
-    if (activityType === CONSTANTS.VIEW_SUBMISSION) {
-      if (context._activity.channelData.view) {
-        const values = context._activity.channelData.view.state.values;
-        const radioValue = UTILS.findValue(values, 'value');
+  if (activityType === CONSTANTS.VIEW_SUBMISSION) {
+    const slackView = channelData.view;
 
-        switch(radioValue) {
-          case CONSTANTS.RADIO_BUTTONS.GIVE:
-            modal.view = giveTemplate;
+    if (slackView) {
+      const slackValues = slackView.state.values;
+      const radioButtonValue = UTILS.findValue(slackValues, 'value');
 
-            context._adapter.slack.views.open(modal);
+      switch(radioButtonValue) {
+        case CONSTANTS.RADIO_BUTTONS.GIVE:
+          modal.view = giveTemplate;
 
-            break;
-          case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
-            modal.view = giftRequest
+          context._adapter.slack.views.open(modal);
 
-            context._adapter.slack.views.open(modal);
-            break;
-          default:
-        }
+          break;
+
+        case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
+          modal.view = giftRequest
+
+          context._adapter.slack.views.open(modal);
+          break;
+
+        default:
       }
     }
+  }
+};
+
+const handleFormData = (context) => {
+  const channelData = context._activity.channelData;
+  const slackView = channelData.view;
+  const currentUser = channelData.user;
+
+  // console.log(channelData);
+
+  if (slackView) {
+    const cbId = slackView.callback_id;
+
+    if (cbId === CONSTANTS.MODAL_CALLBACK.GIVE) {
+      const slackValues = slackView.state.values;
+      const quantityValue = UTILS.findValue(slackValues, 'value');
+      const selectedUser = UTILS.findValue(slackValues, 'selected_user');
+
+      const payload = {
+        quantity: quantityValue,
+        selectedUser: selectedUser
+      };
+
+      console.log(payload);
+    }
+  }
+};
+
+const handleInteractiveFromSlack = (req, res) => {
+  botAdapter.processActivity(req, res, async(context) => {
+    showModal(context);
+    handleFormData(context);
   });
 };
 

@@ -1,6 +1,8 @@
+const { MODAL_CALLBACK } = require('../constants');
+
 const giftRequestTemplate = {
   type: 'modal',
-  callback_id: 'modal-gift-request-cb',
+  callback_id: MODAL_CALLBACK.GIFT_REQUEST,
   title: {
     type: 'plain_text',
     text: 'Bimbim'

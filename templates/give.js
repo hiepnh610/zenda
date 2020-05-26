@@ -1,6 +1,8 @@
+const { MODAL_CALLBACK } = require('../constants');
+
 const giveTemplate = {
   type: 'modal',
-  callback_id: 'modal-cb',
+  callback_id: MODAL_CALLBACK.GIVE,
   title: {
     type: 'plain_text',
     text: 'Bimbim'
@@ -33,12 +35,8 @@ const giveTemplate = {
     },
 
     {
-      type: 'section',
-      text: {
-        type: 'mrkdwn',
-        text: 'Bạn muốn gửi tặng cho ai?'
-      },
-      accessory: {
+      type: 'input',
+      element: {
         type: 'users_select',
         placeholder: {
           type: 'plain_text',
@@ -46,6 +44,10 @@ const giveTemplate = {
           emoji: true
         }
       },
+      label: {
+        type: 'plain_text',
+        text: 'Bạn muốn gửi tặng cho ai?'
+      }
     }
   ]
 };
