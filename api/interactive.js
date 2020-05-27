@@ -1,7 +1,12 @@
 const { SlackAdapter } = require('botbuilder-adapter-slack');
 
-const CONSTANTS  = require('../constants');
+const {
+  findUnique,
+  createUser
+} = require('./users');
+const { createTransaction } = require('./transactions');
 const UTILS = require('../utils');
+const CONSTANTS  = require('../constants');
 const {
   giveTemplate,
   choiceTemplate,
@@ -34,16 +39,19 @@ const showModal = (context) => {
         case CONSTANTS.RADIO_BUTTONS.GIVE:
           modal.view = giveTemplate;
 
+          context._adapter.slack.views.open(modal);
+
           break;
 
         case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
           modal.view = giftRequest
+
+          context._adapter.slack.views.open(modal);
+
           break;
 
         default:
       }
-
-      context._adapter.slack.views.open(modal);
     }
   }
 };
@@ -51,9 +59,6 @@ const showModal = (context) => {
 const handleFormData = (context) => {
   const channelData = context._activity.channelData;
   const slackView = channelData.view;
-  const currentUser = channelData.user;
-
-  // console.log(channelData);
 
   if (slackView) {
     const cbId = slackView.callback_id;
@@ -61,26 +66,64 @@ const handleFormData = (context) => {
 
     switch(cbId) {
       case CONSTANTS.MODAL_CALLBACK.GIVE:
-        const quantityValue = UTILS.findValue(slackValues, 'value');
-        const selectedUser  = UTILS.findValue(slackValues, 'selected_user');
-
-        const payload = {
-          quantity: quantityValue,
-          selectedUser: selectedUser
-        };
-
-        console.log(context);
-
-        // const user = context._adapter.slack.users;
+        giveTheGift(context);
 
         break;
 
       case CONSTANTS.MODAL_CALLBACK.GIFT_REQUEST:
-        console.log(slackValues);
+        // console.log(slackValues);
 
         break;
     }
   }
+};
+
+const giveTheGift = (context) => {
+  const channelData = context._activity.channelData;
+  const slackView = channelData.view;
+  const currentUser = channelData.user;
+  const slackValues = slackView.state.values;
+  const selectedUser = UTILS.findValue(slackValues, 'selected_user');
+  const quantityValue = UTILS.findValue(slackValues, 'value');
+
+  const payload = {
+    from_id: currentUser.id,
+    quantity: quantityValue,
+    to_id: selectedUser
+  };
+
+  checkUsersInDB(context);
+  createTransaction(context, payload);
+};
+
+const checkUsersInDB = async (context) => {
+  const channelData = context._activity.channelData;
+  const slackView = channelData.view;
+  const currentUser = channelData.user;
+  const slackValues = slackView.state.values;
+  const selectedUser = UTILS.findValue(slackValues, 'selected_user');
+
+  const [currentUserInfo, targetUserInfo] = await Promise.all([
+    getUserInfo(context, currentUser.id),
+    getUserInfo(context, selectedUser)
+  ]);
+
+  const isCurrentUserUnique = await findUnique(currentUser.id);
+  const isTargetUserUnique = await findUnique(currentUser.id);
+
+  if (!isCurrentUserUnique) {
+    createUser(currentUserInfo.user);
+  }
+
+  if (!isTargetUserUnique) {
+    createUser(targetUserInfo.user);
+  }
+};
+
+const getUserInfo = (context, userId) => {
+  return context._adapter.slack.users.info({
+    user: userId
+  });
 };
 
 const handleInteractiveFromSlack = (req, res) => {

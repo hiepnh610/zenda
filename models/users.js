@@ -24,6 +24,16 @@ const UserSchema = new Schema(
       required: true
     },
 
+    user_name: {
+      type: String,
+      required: true
+    },
+
+    display_name: {
+      type: String,
+      required: true
+    },
+
     give_bag: {
       type: Number,
       require: true

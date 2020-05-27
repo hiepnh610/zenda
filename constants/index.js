@@ -3,6 +3,7 @@ const { PORT } = require('./port');
 const { SLACK_APP_OPTIONS } = require('./slack-options');
 const { SHORTCUT, VIEW_SUBMISSION } = require('./slack-interactive');
 const { RADIO_BUTTONS, MODAL_CALLBACK } = require('./slack-block-kit');
+const { MESSAGES } = require('./messages');
 
 module.exports = {
   MONGODB_URI,
@@ -12,5 +13,6 @@ module.exports = {
   SLACK_APP_OPTIONS,
   VIEW_SUBMISSION,
   MODAL_CALLBACK,
-  MONGODB_OPTIONS
+  MONGODB_OPTIONS,
+  MESSAGES
 };
