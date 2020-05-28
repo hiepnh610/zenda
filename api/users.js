@@ -1,6 +1,6 @@
 const User = require('../models/users');
 
-const findUnique = (userId) => {
+const getUserInfo = (userId) => {
   const query = { user_id: userId };
 
   return User.findOne(query).exec();
@@ -13,7 +13,7 @@ const createUser = (payload) => {
     email: payload.profile.email,
     give_bag: 20,
     real_name: payload.profile.real_name,
-    receive_bag: 20,
+    receive_bag: 0,
     user_id: payload.id,
     user_name: payload.name
   });
@@ -22,6 +22,6 @@ const createUser = (payload) => {
 };
 
 module.exports = {
-  findUnique,
+  getUserInfo,
   createUser
 };

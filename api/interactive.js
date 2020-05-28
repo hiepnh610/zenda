@@ -1,7 +1,7 @@
 const { SlackAdapter } = require('botbuilder-adapter-slack');
 
 const {
-  findUnique,
+  getUserInfo,
   createUser
 } = require('./users');
 const { createTransaction } = require('./transactions');
@@ -71,56 +71,68 @@ const handleFormData = (context) => {
         break;
 
       case CONSTANTS.MODAL_CALLBACK.GIFT_REQUEST:
-        // console.log(slackValues);
+        console.log(slackValues);
 
         break;
     }
   }
 };
 
-const giveTheGift = (context) => {
+const giveTheGift = async (context) => {
   const channelData = context._activity.channelData;
   const slackView = channelData.view;
-  const currentUser = channelData.user;
+  const fromUser = channelData.user;
   const slackValues = slackView.state.values;
   const selectedUser = UTILS.findValue(slackValues, 'selected_user');
   const quantityValue = UTILS.findValue(slackValues, 'value');
+  const [
+    fromUserInfo,
+    toUserInfo
+  ] = await getSlacksUserInfo(context, fromUser.id, selectedUser);
 
-  const payload = {
-    from_id: currentUser.id,
-    quantity: quantityValue,
-    to_id: selectedUser
-  };
+  checkUsersInDB(fromUserInfo, toUserInfo);
 
-  checkUsersInDB(context);
-  createTransaction(context, payload);
+  // const payload = {
+  //   from_id: fromUser.id,
+  //   quantity: quantityValue,
+  //   to_id: selectedUser
+  // };
+  // createTransaction(context, payload);
 };
 
-const checkUsersInDB = async (context) => {
-  const channelData = context._activity.channelData;
-  const slackView = channelData.view;
-  const currentUser = channelData.user;
-  const slackValues = slackView.state.values;
-  const selectedUser = UTILS.findValue(slackValues, 'selected_user');
-
-  const [currentUserInfo, targetUserInfo] = await Promise.all([
-    getUserInfo(context, currentUser.id),
-    getUserInfo(context, selectedUser)
+const getSlacksUserInfo = async (context, fromUserId, toUserId) => {
+  return await Promise.all([
+    getSlackUserInfo(context, fromUserId),
+    getSlackUserInfo(context, toUserId)
   ]);
-
-  const isCurrentUserUnique = await findUnique(currentUser.id);
-  const isTargetUserUnique = await findUnique(currentUser.id);
-
-  if (!isCurrentUserUnique) {
-    createUser(currentUserInfo.user);
-  }
-
-  if (!isTargetUserUnique) {
-    createUser(targetUserInfo.user);
-  }
 };
 
-const getUserInfo = (context, userId) => {
+const checkBag = async (context) => {
+  const channelData = await context._activity.channelData;
+  const fromUser = channelData.user;
+  const fromUserInfo = await getSlackUserInfo(context, fromUser.id);
+  const fromUserInfoId = fromUserInfo.user.id;
+  const slackUserInfo = await getUserInfo(fromUserInfoId);
+
+  console.log(slackUserInfo);
+};
+
+const checkUsersInDB = async (toSlackUserId, fromSlackUserId) => {
+  const isfromUserUnique = await getUserInfo(toSlackUserId);
+  const isToUserUnique = await getUserInfo(fromSlackUserId);
+
+  if (!isfromUserUnique) {
+    createUser(fromUserInfo.user);
+  }
+
+  if (!isToUserUnique) {
+    createUser(toUserInfo.user);
+  }
+
+  // checkBag(context);
+};
+
+const getSlackUserInfo = (context, userId) => {
   return context._adapter.slack.users.info({
     user: userId
   });
