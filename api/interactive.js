@@ -1,8 +1,8 @@
 const { SlackAdapter } = require('botbuilder-adapter-slack');
 
 const {
-  getUserInfo,
-  createUser
+  getOrCreate,
+  updateUser
 } = require('./users');
 const { createTransaction } = require('./transactions');
 const UTILS = require('../utils');
@@ -84,20 +84,20 @@ const giveTheGift = async (context) => {
   const fromUser = channelData.user;
   const slackValues = slackView.state.values;
   const selectedUser = UTILS.findValue(slackValues, 'selected_user');
-  const quantityValue = UTILS.findValue(slackValues, 'value');
+  const quantityValue = parseInt(UTILS.findValue(slackValues, 'value'));
+  const isIntNumber = Number.isInteger(quantityValue);
   const [
     fromUserInfo,
     toUserInfo
   ] = await getSlacksUserInfo(context, fromUser.id, selectedUser);
 
-  checkUsersInDB(fromUserInfo, toUserInfo);
+  const bagIsValid = await checkBag(fromUserInfo.user, quantityValue);
 
-  // const payload = {
-  //   from_id: fromUser.id,
-  //   quantity: quantityValue,
-  //   to_id: selectedUser
-  // };
-  // createTransaction(context, payload);
+  if (bagIsValid && isIntNumber) {
+    const data = await updateUser(fromUserInfo.user.id, toUserInfo.user.id, quantityValue);
+
+    console.log('data', data);
+  }
 };
 
 const getSlacksUserInfo = async (context, fromUserId, toUserId) => {
@@ -107,29 +107,13 @@ const getSlacksUserInfo = async (context, fromUserId, toUserId) => {
   ]);
 };
 
-const checkBag = async (context) => {
-  const channelData = await context._activity.channelData;
-  const fromUser = channelData.user;
-  const fromUserInfo = await getSlackUserInfo(context, fromUser.id);
-  const fromUserInfoId = fromUserInfo.user.id;
-  const slackUserInfo = await getUserInfo(fromUserInfoId);
+const checkBag = async (fromUserInfo, quantity) => {
+  const getFromUserInfo = await getOrCreate(fromUserInfo);
+  const giveBag = getFromUserInfo.give_bag;
 
-  console.log(slackUserInfo);
-};
-
-const checkUsersInDB = async (toSlackUserId, fromSlackUserId) => {
-  const isfromUserUnique = await getUserInfo(toSlackUserId);
-  const isToUserUnique = await getUserInfo(fromSlackUserId);
-
-  if (!isfromUserUnique) {
-    createUser(fromUserInfo.user);
+  if (giveBag > 0 && giveBag >= quantity) {
+    return true;
   }
-
-  if (!isToUserUnique) {
-    createUser(toUserInfo.user);
-  }
-
-  // checkBag(context);
 };
 
 const getSlackUserInfo = (context, userId) => {
