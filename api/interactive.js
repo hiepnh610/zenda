@@ -90,13 +90,32 @@ const giveTheGift = async (context) => {
     fromUserInfo,
     toUserInfo
   ] = await getSlacksUserInfo(context, fromUser.id, selectedUser);
+  const getFromUserInfo = await getOrCreate(fromUserInfo.user);
 
-  const bagIsValid = await checkBag(fromUserInfo.user, quantityValue);
+  const bagIsValid = await checkBag(getFromUserInfo, quantityValue);
+
+  getOrCreate(toUserInfo.user);
 
   if (bagIsValid && isIntNumber) {
-    const data = await updateUser(fromUserInfo.user.id, toUserInfo.user.id, quantityValue);
+    const userUpdated = await updateUser(
+      fromUserInfo.user.id,
+      toUserInfo.user.id,
+      quantityValue
+    );
 
-    console.log('data', data);
+    if (userUpdated) {
+      const payload = {
+        from_user_id: fromUserInfo.user.id,
+        quantity: quantityValue,
+        to_user_id: toUserInfo.user.id
+      };
+
+      const transCreated = await createTransaction(payload);
+
+      if (transCreated) {
+        console.log(context);
+      }
+    }
   }
 };
 
@@ -108,8 +127,7 @@ const getSlacksUserInfo = async (context, fromUserId, toUserId) => {
 };
 
 const checkBag = async (fromUserInfo, quantity) => {
-  const getFromUserInfo = await getOrCreate(fromUserInfo);
-  const giveBag = getFromUserInfo.give_bag;
+  const giveBag = fromUserInfo.give_bag;
 
   if (giveBag > 0 && giveBag >= quantity) {
     return true;
@@ -123,7 +141,7 @@ const getSlackUserInfo = (context, userId) => {
 };
 
 const handleInteractiveFromSlack = (req, res) => {
-  botAdapter.processActivity(req, res, async(context) => {
+  botAdapter.processActivity(req, res, (context) => {
     showModal(context);
     handleFormData(context);
   });

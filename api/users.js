@@ -35,30 +35,27 @@ const getOrCreate = async (payload) => {
 const updateUser = async (fromUserId, toUserId, quantity) => {
   const fromUserQuery = { user_id: fromUserId };
   const toUserQuery = { user_id: toUserId };
-
-  return await User.findOne(fromUserQuery, async (e, user) => {
-    if (!e && user) {
-      const isSendToTargetUser = await User.findOne(toUserQuery, async (e, user) => {
-        if (!e && user) {
-          user.set({
-            receive_bag: user.receive_bag + quantity
-          });
-
-          return await user.save();
-        }
+  const decreaseFromUserPoints = await User.findOne(
+    fromUserQuery,
+    async (e, user) => {
+      user.set({
+        give_bag: user.give_bag - quantity
       });
 
-      if (isSendToTargetUser) {
-        user.set({
-          give_bag: user.give_bag - quantity
-        });
+      return await user.save();
+    });
 
-        return await user.save();
-      }
+  if (decreaseFromUserPoints) {
+    User.findOne(toUserQuery, async (e, user) => {
+      user.set({
+        receive_bag: user.receive_bag + quantity
+      });
 
-      return null;
-    }
-  });
+      return await user.save();
+    });
+  }
+
+  return decreaseFromUserPoints;
 };
 
 module.exports = {
