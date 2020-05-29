@@ -1,4 +1,3 @@
-const { SlackAdapter } = require('botbuilder-adapter-slack');
 const { WebClient } = require('@slack/web-api');
 
 const {
@@ -16,43 +15,51 @@ const {
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
-const showModal = (payload) => {
-  const activityType = payload.type;
-  const modal = {
-    "trigger_id": payload.trigger_id
-  }
+const showModal = (req, res) => {
+  if (req && req.body && req.body.payload) {
+    const payload = JSON.parse(req.body.payload);
 
-  if (activityType === CONSTANTS.SHORTCUT) {
-    modal.view = choiceTemplate;
+    const activityType = payload.type;
+    const modal = {
+      "trigger_id": payload.trigger_id
+    }
 
-    web.views.open(modal);
-  }
+    if (activityType === CONSTANTS.SHORTCUT) {
+      modal.view = choiceTemplate;
 
-  if (activityType === CONSTANTS.VIEW_SUBMISSION) {
-    const slackView = payload.view;
+      web.views.open(modal);
+    }
 
-    if (slackView) {
-      const slackValues = slackView.state.values;
-      const radioButtonValue = UTILS.findValue(slackValues, 'value');
+    if (activityType === CONSTANTS.VIEW_SUBMISSION) {
+      res.status(200).end();
 
-      switch(radioButtonValue) {
-        case CONSTANTS.RADIO_BUTTONS.GIVE:
-          modal.view = giveTemplate;
+      const slackView = payload.view;
 
-          web.views.update(modal);
+      if (slackView) {
+        const slackValues = slackView.state.values;
+        const radioButtonValue = UTILS.findValue(slackValues, 'value');
 
-          break;
+        switch(radioButtonValue) {
+          case CONSTANTS.RADIO_BUTTONS.GIVE:
+            modal.view = giveTemplate;
 
-        case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
-          modal.view = giftRequest
+            web.views.open(modal);
 
-          web.views.open(modal);
+            break;
 
-          break;
+          case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
+            modal.view = giftRequest
 
-        default:
+            web.views.open(modal);
+
+            break;
+
+          default:
+        }
       }
     }
+
+    res.status(200).end();
   }
 };
 
@@ -141,14 +148,7 @@ const getSlackUserInfo = (context, userId) => {
 };
 
 const handleInteractiveFromSlack = (req, res) => {
-  if (req && req.body && req.body.payload) {
-    const payload = JSON.parse(req.body.payload);
-
-    showModal(payload);
-  }
-  // botAdapter.processActivity(req, res, async (context) => {
-  //   handleFormData(await context);
-  // });
+  showModal(req, res);
 };
 
 module.exports = {

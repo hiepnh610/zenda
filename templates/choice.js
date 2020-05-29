@@ -2,7 +2,6 @@ const { RADIO_BUTTONS } = require('../constants');
 
 const choiceTemplate = {
   type: 'modal',
-  callback_id: 'modal-choice-cb',
   title: {
     type: 'plain_text',
     text: 'Bimbim'
