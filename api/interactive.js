@@ -10,7 +10,8 @@ const CONSTANTS  = require('../constants');
 const {
   giveTemplate,
   choiceTemplate,
-  giftRequest
+  giftRequest,
+  outOfPointsTemplate
 } = require('../templates');
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
@@ -22,7 +23,7 @@ const showModal = (req, res) => {
     const activityType = payload.type;
     const modal = {
       "trigger_id": payload.trigger_id
-    }
+    };
 
     if (activityType === CONSTANTS.SHORTCUT) {
       modal.view = choiceTemplate;
@@ -109,7 +110,13 @@ const giveTheGift = async (req) => {
     const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
 
     if (!checkUserRequestBag) {
-      /* TODO */
+      const modal = {
+        "trigger_id": payload.trigger_id
+      };
+
+      modal.view = outOfPointsTemplate;
+
+      web.views.open(modal);
     }
 
     if (checkUserRequestBag && isIntNumber) {
