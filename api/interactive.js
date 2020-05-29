@@ -1,4 +1,5 @@
 const { SlackAdapter } = require('botbuilder-adapter-slack');
+const { WebClient } = require('@slack/web-api');
 
 const {
   getOrCreate,
@@ -13,23 +14,22 @@ const {
   giftRequest
 } = require('../templates');
 
-const botAdapter = new SlackAdapter(CONSTANTS.SLACK_APP_OPTIONS);
+const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
-const showModal = (context) => {
-  const channelData = context._activity.channelData;
-  const activityType = channelData.type;
+const showModal = (payload) => {
+  const activityType = payload.type;
   const modal = {
-    "trigger_id": channelData.trigger_id
+    "trigger_id": payload.trigger_id
   }
 
   if (activityType === CONSTANTS.SHORTCUT) {
     modal.view = choiceTemplate;
 
-    context._adapter.slack.views.open(modal);
+    web.views.open(modal);
   }
 
   if (activityType === CONSTANTS.VIEW_SUBMISSION) {
-    const slackView = channelData.view;
+    const slackView = payload.view;
 
     if (slackView) {
       const slackValues = slackView.state.values;
@@ -39,14 +39,14 @@ const showModal = (context) => {
         case CONSTANTS.RADIO_BUTTONS.GIVE:
           modal.view = giveTemplate;
 
-          context._adapter.slack.views.open(modal);
+          web.views.update(modal);
 
           break;
 
         case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
           modal.view = giftRequest
 
-          context._adapter.slack.views.open(modal);
+          web.views.open(modal);
 
           break;
 
@@ -56,8 +56,8 @@ const showModal = (context) => {
   }
 };
 
-const handleFormData = (context) => {
-  const channelData = context._activity.channelData;
+const handleFormData = async (context) => {
+  const channelData = await context._activity.channelData;
   const slackView = channelData.view;
 
   if (slackView) {
@@ -66,7 +66,7 @@ const handleFormData = (context) => {
 
     switch(cbId) {
       case CONSTANTS.MODAL_CALLBACK.GIVE:
-        giveTheGift(context);
+        giveTheGift(await context);
 
         break;
 
@@ -89,7 +89,7 @@ const giveTheGift = async (context) => {
   const [
     fromUserInfo,
     toUserInfo
-  ] = await getSlacksUserInfo(context, fromUser.id, selectedUser);
+  ] = await getSlacksUserInfo(await context, fromUser.id, selectedUser);
   const getFromUserInfo = await getOrCreate(fromUserInfo.user);
 
   const bagIsValid = await checkBag(getFromUserInfo, quantityValue);
@@ -113,7 +113,7 @@ const giveTheGift = async (context) => {
       const transCreated = await createTransaction(payload);
 
       if (transCreated) {
-        console.log(context);
+        console.log(await context);
       }
     }
   }
@@ -141,10 +141,14 @@ const getSlackUserInfo = (context, userId) => {
 };
 
 const handleInteractiveFromSlack = (req, res) => {
-  botAdapter.processActivity(req, res, (context) => {
-    showModal(context);
-    handleFormData(context);
-  });
+  if (req && req.body && req.body.payload) {
+    const payload = JSON.parse(req.body.payload);
+
+    showModal(payload);
+  }
+  // botAdapter.processActivity(req, res, async (context) => {
+  //   handleFormData(await context);
+  // });
 };
 
 module.exports = {
