@@ -3,12 +3,12 @@ const Schema = mongoose.Schema;
 
 const TransactionSchema = new Schema(
   {
-    from_user_id: {
+    user_request_id: {
       type: String,
       required: true
     },
 
-    to_user_id: {
+    user_receive_id: {
       type: String,
       required: true
     },

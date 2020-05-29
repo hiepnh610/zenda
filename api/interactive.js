@@ -1,4 +1,4 @@
-const { SlackAdapter } = require('botbuilder-adapter-slack');
+const { WebClient } = require('@slack/web-api');
 
 const {
   getOrCreate,
@@ -10,141 +10,138 @@ const CONSTANTS  = require('../constants');
 const {
   giveTemplate,
   choiceTemplate,
-  giftRequest
+  giftRequest,
+  outOfPointsTemplate
 } = require('../templates');
 
-const botAdapter = new SlackAdapter(CONSTANTS.SLACK_APP_OPTIONS);
+const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
-const showModal = (context) => {
-  const channelData = context._activity.channelData;
-  const activityType = channelData.type;
-  const modal = {
-    "trigger_id": channelData.trigger_id
+const showModal = (req, res) => {
+  if (req && req.body && req.body.payload) {
+    const payload = JSON.parse(req.body.payload);
+
+    const activityType = payload.type;
+    const modal = {
+      "trigger_id": payload.trigger_id
+    };
+
+    if (activityType === CONSTANTS.SHORTCUT) {
+      modal.view = choiceTemplate;
+
+      web.views.open(modal);
+    }
+
+    if (activityType === CONSTANTS.VIEW_SUBMISSION) {
+      const slackView = payload.view;
+
+      if (slackView) {
+        const slackValues = slackView.state.values;
+        const radioButtonValue = UTILS.findValue(slackValues, 'value');
+
+        switch(radioButtonValue) {
+          case CONSTANTS.RADIO_BUTTONS.GIVE:
+            res.status(200).end();
+
+            modal.view = giveTemplate;
+
+            web.views.open(modal);
+
+            break;
+
+          case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
+            res.status(200).end();
+
+            modal.view = giftRequest
+
+            web.views.open(modal);
+
+            break;
+
+          default:
+            res.status(400);
+        }
+      }
+    }
+
+    res.status(200).end();
   }
+};
 
-  if (activityType === CONSTANTS.SHORTCUT) {
-    modal.view = choiceTemplate;
+const handleDataSubmit = (req) => {
+  if (req && req.body && req.body.payload) {
+    const payload = JSON.parse(req.body.payload);
 
-    context._adapter.slack.views.open(modal);
-  }
-
-  if (activityType === CONSTANTS.VIEW_SUBMISSION) {
-    const slackView = channelData.view;
+    const slackView = payload.view;
 
     if (slackView) {
+      const cbId = slackView.callback_id;
       const slackValues = slackView.state.values;
-      const radioButtonValue = UTILS.findValue(slackValues, 'value');
 
-      switch(radioButtonValue) {
-        case CONSTANTS.RADIO_BUTTONS.GIVE:
-          modal.view = giveTemplate;
-
-          context._adapter.slack.views.open(modal);
+      switch(cbId) {
+        case CONSTANTS.MODAL_CALLBACK.GIVE:
+          giveTheGift(req);
 
           break;
 
-        case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
-          modal.view = giftRequest
-
-          context._adapter.slack.views.open(modal);
+        case CONSTANTS.MODAL_CALLBACK.GIFT_REQUEST:
+          console.log(slackValues);
 
           break;
-
-        default:
       }
     }
   }
 };
 
-const handleFormData = (context) => {
-  const channelData = context._activity.channelData;
-  const slackView = channelData.view;
+const giveTheGift = async (req) => {
+  if (req && req.body && req.body.payload) {
+    const payload = JSON.parse(req.body.payload);
+    const slackView = payload.view;
 
-  if (slackView) {
-    const cbId = slackView.callback_id;
-    const slackValues = slackView.state.values;
+    const userRequest = payload.user;
+    const userIdRequest = userRequest.id;
 
-    switch(cbId) {
-      case CONSTANTS.MODAL_CALLBACK.GIVE:
-        giveTheGift(context);
+    const valuesRequest = slackView.state.values;
 
-        break;
+    const userIdReceive = UTILS.findValue(valuesRequest, 'selected_user');
+    const valueQuantity = parseInt(UTILS.findValue(valuesRequest, 'value'));
+    const isIntNumber = Number.isInteger(valueQuantity);
 
-      case CONSTANTS.MODAL_CALLBACK.GIFT_REQUEST:
-        console.log(slackValues);
+    const getUserRequestInfo = await getOrCreate(userIdRequest);
+    const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
 
-        break;
-    }
-  }
-};
-
-const giveTheGift = async (context) => {
-  const channelData = context._activity.channelData;
-  const slackView = channelData.view;
-  const fromUser = channelData.user;
-  const slackValues = slackView.state.values;
-  const selectedUser = UTILS.findValue(slackValues, 'selected_user');
-  const quantityValue = parseInt(UTILS.findValue(slackValues, 'value'));
-  const isIntNumber = Number.isInteger(quantityValue);
-  const [
-    fromUserInfo,
-    toUserInfo
-  ] = await getSlacksUserInfo(context, fromUser.id, selectedUser);
-  const getFromUserInfo = await getOrCreate(fromUserInfo.user);
-
-  const bagIsValid = await checkBag(getFromUserInfo, quantityValue);
-
-  getOrCreate(toUserInfo.user);
-
-  if (bagIsValid && isIntNumber) {
-    const userUpdated = await updateUser(
-      fromUserInfo.user.id,
-      toUserInfo.user.id,
-      quantityValue
-    );
-
-    if (userUpdated) {
-      const payload = {
-        from_user_id: fromUserInfo.user.id,
-        quantity: quantityValue,
-        to_user_id: toUserInfo.user.id
+    if (!checkUserRequestBag) {
+      const modal = {
+        "trigger_id": payload.trigger_id
       };
 
-      const transCreated = await createTransaction(payload);
+      modal.view = outOfPointsTemplate;
 
-      if (transCreated) {
-        console.log(context);
+      web.views.open(modal);
+    }
+
+    if (checkUserRequestBag && isIntNumber) {
+      const transactionData = await updateUser(
+        userIdRequest,
+        userIdReceive,
+        valueQuantity
+      );
+
+      if (transactionData) {
+        createTransaction(transactionData);
       }
     }
   }
 };
 
-const getSlacksUserInfo = async (context, fromUserId, toUserId) => {
-  return await Promise.all([
-    getSlackUserInfo(context, fromUserId),
-    getSlackUserInfo(context, toUserId)
-  ]);
-};
+const checkBag = (userInfo, quantity) => {
+  const giveBag = userInfo.give_bag;
 
-const checkBag = async (fromUserInfo, quantity) => {
-  const giveBag = fromUserInfo.give_bag;
-
-  if (giveBag > 0 && giveBag >= quantity) {
-    return true;
-  }
-};
-
-const getSlackUserInfo = (context, userId) => {
-  return context._adapter.slack.users.info({
-    user: userId
-  });
+  return (giveBag > 0 && giveBag >= quantity);
 };
 
 const handleInteractiveFromSlack = (req, res) => {
-  botAdapter.processActivity(req, res, (context) => {
-    showModal(context);
-    handleFormData(context);
-  });
+  showModal(req, res);
+  handleDataSubmit(req);
 };
 
 module.exports = {
