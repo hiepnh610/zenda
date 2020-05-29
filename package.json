@@ -19,7 +19,6 @@
   "dependencies": {
     "@slack/web-api": "^5.9.0",
     "body-parser": "^1.19.0",
-    "botbuilder-adapter-slack": "^1.0.11",
     "express": "^4.17.1",
     "mongoose": "^5.9.15",
     "morgan": "^1.10.0",
