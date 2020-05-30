@@ -11,7 +11,7 @@ const {
   giveTemplate,
   choiceTemplate,
   giftRequest,
-  outOfPointsTemplate
+  errorTemplate
 } = require('../templates');
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
@@ -95,6 +95,9 @@ const handleDataSubmit = (req) => {
 const giveTheGift = async (req) => {
   if (req && req.body && req.body.payload) {
     const payload = JSON.parse(req.body.payload);
+    const modal = {
+      "trigger_id": payload.trigger_id
+    };
     const slackView = payload.view;
 
     const userRequest = payload.user;
@@ -106,17 +109,43 @@ const giveTheGift = async (req) => {
     const valueQuantity = parseInt(UTILS.findValue(valuesRequest, 'value'));
     const isIntNumber = Number.isInteger(valueQuantity);
 
+    const isDeleted = await checkUserIsActive(userIdReceive);
+
+    if (isDeleted) {
+      modal.view = errorTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER);
+
+      web.views.open(modal);
+
+      return;
+    }
+
+    const isBot = await checkUserIsHuman(userIdReceive);
+
+    if (isBot) {
+      modal.view = errorTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
+
+      web.views.open(modal);
+
+      return;
+    }
+
     const getUserRequestInfo = await getOrCreate(userIdRequest);
     const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
 
-    if (!checkUserRequestBag) {
-      const modal = {
-        "trigger_id": payload.trigger_id
-      };
-
-      modal.view = outOfPointsTemplate;
+    if (userIdRequest === userIdReceive) {
+      modal.view = errorTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
 
       web.views.open(modal);
+
+      return;
+    }
+
+    if (!checkUserRequestBag) {
+      modal.view = errorTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
+
+      web.views.open(modal);
+
+      return;
     }
 
     if (checkUserRequestBag && isIntNumber) {
@@ -130,6 +159,24 @@ const giveTheGift = async (req) => {
         createTransaction(transactionData);
       }
     }
+  }
+};
+
+const checkUserIsHuman = async (userId) => {
+  const query = { user: userId };
+  const userInfo = await web.users.info(query);
+
+  if (userInfo.ok && userInfo.user) {
+    return !!(userInfo.user.is_bot);
+  }
+};
+
+const checkUserIsActive = async (userId) => {
+  const query = { user: userId };
+  const userInfo = await web.users.info(query);
+
+  if (userInfo.ok && userInfo.user) {
+    return !!(userInfo.user.deleted);
   }
 };
 
