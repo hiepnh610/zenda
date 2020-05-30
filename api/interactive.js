@@ -11,7 +11,7 @@ const {
   giveTemplate,
   choiceTemplate,
   giftRequest,
-  errorTemplate
+  generalTemplate
 } = require('../templates');
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
@@ -57,6 +57,15 @@ const showModal = (req, res) => {
 
             break;
 
+          case CONSTANTS.RADIO_BUTTONS.CHECK_BAG:
+            res.status(200).end();
+
+            modal.view = generalTemplate('Bạn có xxx bimbim.');
+
+            web.views.open(modal);
+
+            break;
+
           default:
             res.status(400);
         }
@@ -87,6 +96,8 @@ const handleDataSubmit = (req) => {
           console.log(slackValues);
 
           break;
+
+        default:
       }
     }
   }
@@ -112,7 +123,7 @@ const giveTheGift = async (req) => {
     const isDeleted = await checkUserIsActive(userIdReceive);
 
     if (isDeleted) {
-      modal.view = errorTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER);
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER);
 
       web.views.open(modal);
 
@@ -122,7 +133,7 @@ const giveTheGift = async (req) => {
     const isBot = await checkUserIsHuman(userIdReceive);
 
     if (isBot) {
-      modal.view = errorTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
 
       web.views.open(modal);
 
@@ -133,7 +144,7 @@ const giveTheGift = async (req) => {
     const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
 
     if (userIdRequest === userIdReceive) {
-      modal.view = errorTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
 
       web.views.open(modal);
 
@@ -141,7 +152,7 @@ const giveTheGift = async (req) => {
     }
 
     if (!checkUserRequestBag) {
-      modal.view = errorTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
 
       web.views.open(modal);
 

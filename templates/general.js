@@ -1,4 +1,4 @@
-const errorTemplate = (message) => {
+const generalTemplate = (message) => {
   return {
     type: 'modal',
     title: {
@@ -22,4 +22,4 @@ const errorTemplate = (message) => {
   };
 };
 
-module.exports = errorTemplate;
+module.exports = generalTemplate;
