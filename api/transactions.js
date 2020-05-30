@@ -18,7 +18,7 @@ const createTransaction = (transactionData) => {
 const getChannelInfo = async () => {
   const channelList = await web.conversations.list();
 
-  return channelList.channels.filter(channel => channel.name === 'bimbim');
+  return channelList.channels.filter((channel) => channel.name === 'bimbim');
 };
 
 const sendMessage = async (transactionData) => {
@@ -29,10 +29,20 @@ const sendMessage = async (transactionData) => {
     const userRequestId = transactionData.user_request_id;
     const userReceiveId = transactionData.user_receive_id;
     const quantity = transactionData.quantity;
+    const text = transactionData.text;
 
     const params = {
       channel: channelId,
-      text: `<@${userRequestId}> đã gửi tặng <@${userReceiveId}> ${quantity} bimbim.`
+      text: '',
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<@${userRequestId}> đã gửi tặng <@${userReceiveId}> ${quantity} bimbim. Với lời nhắn: \n>${text}`,
+          },
+        },
+      ],
     };
 
     const isMessageSendSuccess = await web.chat.postMessage(params);
@@ -46,11 +56,11 @@ const sendMessage = async (transactionData) => {
 
 const checkUserInChannel = async (channelId, userId) => {
   const usersInChannel = await web.conversations.members({
-    channel: channelId
+    channel: channelId,
   });
 
   if (usersInChannel.ok && usersInChannel.members.length) {
-    const isUserInChannel = await usersInChannel.members.find(member => {
+    const isUserInChannel = await usersInChannel.members.find((member) => {
       return member === userId;
     });
 
@@ -63,12 +73,12 @@ const checkUserInChannel = async (channelId, userId) => {
 const inviteUserToChannel = (channelId, userId) => {
   const params = {
     channel: channelId,
-    users: userId
+    users: userId,
   };
 
   web.conversations.invite(params);
 };
 
 module.exports = {
-  createTransaction
+  createTransaction,
 };

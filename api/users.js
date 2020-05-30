@@ -17,14 +17,9 @@ const createUser = async (userId) => {
   const slackUserInfo = getSlackUserInfo.user;
 
   const user = new User({
-    avatar: slackUserInfo.profile.image_512,
-    display_name: slackUserInfo.profile.display_name || '',
-    email: slackUserInfo.profile.email,
     give_bag: 20,
-    real_name: slackUserInfo.profile.real_name,
     receive_bag: 0,
-    user_id: slackUserInfo.id,
-    user_name: slackUserInfo.name
+    user_id: slackUserInfo.id
   });
 
   return user.save();

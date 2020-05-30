@@ -1,13 +1,11 @@
-const giftRequest    = require('./gift-request');
-const giveTemplate   = require('./give');
-const choiceTemplate = require('./choice');
+const giftRequestTemplate = require('./gift-request');
+const giveTemplate = require('./give');
 const generalTemplate = require('./general');
 const checkBagTemplate = require('./check-bag');
 
 module.exports = {
-  giftRequest,
+  giftRequestTemplate,
   giveTemplate,
-  choiceTemplate,
   generalTemplate,
   checkBagTemplate
 };

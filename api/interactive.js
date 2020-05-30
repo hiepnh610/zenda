@@ -1,4 +1,5 @@
 const { WebClient } = require('@slack/web-api');
+const _ = require('lodash');
 
 const {
   getOrCreate,
@@ -9,66 +10,39 @@ const UTILS = require('../utils');
 const CONSTANTS  = require('../constants');
 const {
   giveTemplate,
-  choiceTemplate,
-  giftRequest,
+  giftRequestTemplate,
   generalTemplate
 } = require('../templates');
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
-const showModal = (req, res) => {
+const showModal = async (req, res) => {
   if (req && req.body && req.body.payload) {
     const payload = JSON.parse(req.body.payload);
-
+    const callbackId = payload.callback_id;
     const activityType = payload.type;
     const modal = {
       "trigger_id": payload.trigger_id
     };
 
     if (activityType === CONSTANTS.SHORTCUT) {
-      modal.view = choiceTemplate;
+      if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIVE) {
+        const userRequest = payload.user;
+        const userIdRequest = userRequest.id;
+        const getUserRequestInfo = await getOrCreate(userIdRequest);
 
-      web.views.open(modal);
-    }
+        modal.view = giveTemplate(
+          getUserRequestInfo.give_bag,
+          getUserRequestInfo.receive_bag
+        );
 
-    if (activityType === CONSTANTS.VIEW_SUBMISSION) {
-      const slackView = payload.view;
+        web.views.open(modal);
+      }
 
-      if (slackView) {
-        const slackValues = slackView.state.values;
-        const radioButtonValue = UTILS.findValue(slackValues, 'value');
+      if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIFT_REQUEST) {
+        modal.view = giftRequestTemplate;
 
-        switch(radioButtonValue) {
-          case CONSTANTS.RADIO_BUTTONS.GIVE:
-            res.status(200).end();
-
-            modal.view = giveTemplate;
-
-            web.views.open(modal);
-
-            break;
-
-          case CONSTANTS.RADIO_BUTTONS.GIFT_REQUEST:
-            res.status(200).end();
-
-            modal.view = giftRequest
-
-            web.views.open(modal);
-
-            break;
-
-          case CONSTANTS.RADIO_BUTTONS.CHECK_BAG:
-            res.status(200).end();
-
-            modal.view = generalTemplate('Bạn có xxx bimbim.');
-
-            web.views.open(modal);
-
-            break;
-
-          default:
-            res.status(400);
-        }
+        web.views.open(modal);
       }
     }
 
@@ -87,12 +61,12 @@ const handleDataSubmit = (req) => {
       const slackValues = slackView.state.values;
 
       switch(cbId) {
-        case CONSTANTS.MODAL_CALLBACK.GIVE:
+        case CONSTANTS.MODAL_CALLBACK_ID.GIVE:
           giveTheGift(req);
 
           break;
 
-        case CONSTANTS.MODAL_CALLBACK.GIFT_REQUEST:
+        case CONSTANTS.MODAL_CALLBACK_ID.GIFT_REQUEST:
           console.log(slackValues);
 
           break;
@@ -116,8 +90,9 @@ const giveTheGift = async (req) => {
 
     const valuesRequest = slackView.state.values;
 
-    const userIdReceive = UTILS.findValue(valuesRequest, 'selected_user');
-    const valueQuantity = parseInt(UTILS.findValue(valuesRequest, 'value'));
+    const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
+    const valueQuantity = parseInt(UTILS.findValue(valuesRequest, 'quantity').value);
+    const userMessage = UTILS.findValue(valuesRequest, 'message').value;
     const isIntNumber = Number.isInteger(valueQuantity);
 
     const isDeleted = await checkUserIsActive(userIdReceive);
@@ -167,7 +142,10 @@ const giveTheGift = async (req) => {
       );
 
       if (transactionData) {
-        createTransaction(transactionData);
+        createTransaction({
+          ...transactionData,
+          text: userMessage
+        });
       }
     }
   }

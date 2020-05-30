@@ -1,55 +1,92 @@
-const { MODAL_CALLBACK } = require('../constants');
+const { MODAL_CALLBACK_ID } = require('../constants');
 
-const giveTemplate = {
-  type: 'modal',
-  callback_id: MODAL_CALLBACK.GIVE,
-  title: {
-    type: 'plain_text',
-    text: 'Bimbim'
-  },
-  submit: {
-    type: 'plain_text',
-    text: 'Tặng',
-    emoji: true
-  },
-  close: {
-    type: 'plain_text',
-    text: 'Huỷ bỏ',
-    emoji: true
-  },
-  blocks: [
-    {
-      type: 'input',
-      element: {
-        type: 'plain_text_input',
-        action_id: 'title',
-        placeholder: {
-          type: 'plain_text',
-          text: 'Số bimbim muốn gửi tặng.'
+const giveTemplate = (giveBag, receiveBag) => {
+  return {
+    type: 'modal',
+    callback_id: MODAL_CALLBACK_ID.GIVE,
+    title: {
+      type: 'plain_text',
+      text: 'Bimbim',
+    },
+    submit: {
+      type: 'plain_text',
+      text: 'Tặng',
+      emoji: true,
+    },
+    close: {
+      type: 'plain_text',
+      text: 'Huỷ bỏ',
+      emoji: true,
+    },
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `Túi cho: *${giveBag}* bimbim`,
         },
       },
-      label: {
-        type: 'plain_text',
-        text: 'Số lượng.'
-      }
-    },
-
-    {
-      type: 'input',
-      element: {
-        type: 'users_select',
-        placeholder: {
-          type: 'plain_text',
-          text: 'Chọn người bạn muốn tặng.',
-          emoji: true
-        }
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `Túi nhận: *${receiveBag}* bimbim`,
+        },
       },
-      label: {
-        type: 'plain_text',
-        text: 'Bạn muốn gửi tặng cho ai?'
-      }
-    }
-  ]
+      {
+        type: 'input',
+        element: {
+          type: 'plain_text_input',
+          action_id: 'quantity',
+          placeholder: {
+            type: 'plain_text',
+            text: 'Số bimbim muốn gửi tặng.',
+          },
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Số lượng.',
+        },
+      },
+
+      {
+        type: 'input',
+        element: {
+          type: 'users_select',
+          action_id: 'user_receive',
+          placeholder: {
+            type: 'plain_text',
+            text: 'Chọn đồng nghiệp bạn muốn tặng.',
+            emoji: true,
+          },
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Bạn muốn gửi tặng cho ai?',
+        },
+      },
+
+      {
+        type: 'input',
+        element: {
+          type: 'plain_text_input',
+          action_id: 'message',
+          multiline: true,
+          min_length: 20,
+          placeholder: {
+            type: 'plain_text',
+            text: 'Viết lời yêu thương tới đồng nghiệp.',
+            emoji: true,
+          },
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Lời nhắn',
+          emoji: true,
+        },
+      },
+    ],
+  };
 };
 
 module.exports = giveTemplate;

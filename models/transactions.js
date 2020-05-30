@@ -16,6 +16,11 @@ const TransactionSchema = new Schema(
     quantity: {
       type: Number,
       required: true
+    },
+
+    text: {
+      type: String,
+      required: true
     }
   },
 
