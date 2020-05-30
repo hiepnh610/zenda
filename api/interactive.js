@@ -1,11 +1,11 @@
 const { WebClient } = require('@slack/web-api');
-const _ = require('lodash');
 
 const {
   getOrCreate,
   updateUser
 } = require('./users');
 const { createTransaction } = require('./transactions');
+const { createGift } = require('./gift');
 const UTILS = require('../utils');
 const CONSTANTS  = require('../constants');
 const {
@@ -58,96 +58,109 @@ const handleDataSubmit = (req) => {
 
     if (slackView) {
       const cbId = slackView.callback_id;
-      const slackValues = slackView.state.values;
 
-      switch(cbId) {
-        case CONSTANTS.MODAL_CALLBACK_ID.GIVE:
-          giveTheGift(req);
+      if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIVE) {
+        giveTheGift(payload);
+      }
 
-          break;
-
-        case CONSTANTS.MODAL_CALLBACK_ID.GIFT_REQUEST:
-          console.log(slackValues);
-
-          break;
-
-        default:
+      if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_REQUEST) {
+        requestGift(payload);
       }
     }
   }
 };
 
-const giveTheGift = async (req) => {
-  if (req && req.body && req.body.payload) {
-    const payload = JSON.parse(req.body.payload);
-    const modal = {
-      "trigger_id": payload.trigger_id
-    };
-    const slackView = payload.view;
+const giveTheGift = async (payload) => {
+  const modal = {
+    "trigger_id": payload.trigger_id
+  };
+  const slackView = payload.view;
 
-    const userRequest = payload.user;
-    const userIdRequest = userRequest.id;
+  const userRequest = payload.user;
+  const userIdRequest = userRequest.id;
 
-    const valuesRequest = slackView.state.values;
+  const valuesRequest = slackView.state.values;
 
-    const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
-    const valueQuantity = parseInt(UTILS.findValue(valuesRequest, 'quantity').value);
-    const userMessage = UTILS.findValue(valuesRequest, 'message').value;
-    const isIntNumber = Number.isInteger(valueQuantity);
+  const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
+  const valueQuantity = parseInt(UTILS.findValue(valuesRequest, 'quantity').value);
+  const userMessage = UTILS.findValue(valuesRequest, 'message').value;
+  const isIntNumber = Number.isInteger(valueQuantity);
 
-    const isDeleted = await checkUserIsActive(userIdReceive);
+  const isDeleted = await checkUserIsActive(userIdReceive);
 
-    if (isDeleted) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER);
+  if (isDeleted) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER);
 
-      web.views.open(modal);
+    web.views.open(modal);
 
-      return;
+    return;
+  }
+
+  const isBot = await checkUserIsHuman(userIdReceive);
+
+  if (isBot) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  const getUserRequestInfo = await getOrCreate(userIdRequest);
+  const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
+
+  if (userIdRequest === userIdReceive) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  if (!checkUserRequestBag) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  if (checkUserRequestBag && isIntNumber) {
+    const transactionData = await updateUser(
+      userIdRequest,
+      userIdReceive,
+      valueQuantity
+    );
+
+    if (transactionData) {
+      createTransaction({
+        ...transactionData,
+        text: userMessage
+      });
     }
+  }
+};
 
-    const isBot = await checkUserIsHuman(userIdReceive);
+const requestGift = async (payload) => {
+  const modal = {
+    "trigger_id": payload.trigger_id
+  };
+  const slackView = payload.view;
+  const valuesRequest = slackView.state.values;
 
-    if (isBot) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
+  const giftName = UTILS.findValue(valuesRequest, 'gift-name').value;
+  const giftLink = UTILS.findValue(valuesRequest, 'gift-link').value;
+  const data = {
+    gift_name: giftName,
+    gift_link: giftLink
+  };
 
-      web.views.open(modal);
+  const giftCreated = await createGift(data);
 
-      return;
-    }
+  if (giftCreated) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.GIFT_SEND_TO_ADMIN_SUCCESSFULLY);
 
-    const getUserRequestInfo = await getOrCreate(userIdRequest);
-    const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
-
-    if (userIdRequest === userIdReceive) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
-
-      web.views.open(modal);
-
-      return;
-    }
-
-    if (!checkUserRequestBag) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
-
-      web.views.open(modal);
-
-      return;
-    }
-
-    if (checkUserRequestBag && isIntNumber) {
-      const transactionData = await updateUser(
-        userIdRequest,
-        userIdReceive,
-        valueQuantity
-      );
-
-      if (transactionData) {
-        createTransaction({
-          ...transactionData,
-          text: userMessage
-        });
-      }
-    }
+    web.views.open(modal);
   }
 };
 

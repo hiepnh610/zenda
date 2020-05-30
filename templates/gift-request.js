@@ -23,6 +23,7 @@ const giftRequestTemplate = {
       element: {
         type: 'plain_text_input',
         action_id: 'gift-name',
+        min_length: 10,
         placeholder: {
           type: 'plain_text',
           text: 'Tên quà tặng bạn muốn yêu cầu.'
@@ -39,6 +40,7 @@ const giftRequestTemplate = {
       element: {
         type: 'plain_text_input',
         action_id: 'gift-link',
+        min_length: 10,
         placeholder: {
           type: 'plain_text',
           text: 'Đường dẫn của sản phẩm hoặc hình ảnh.'
