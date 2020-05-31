@@ -79,6 +79,21 @@ const inviteUserToChannel = (channelId, userId) => {
   web.conversations.invite(params);
 };
 
+const getTransactions = (req, res) => {
+  Transaction
+    .find({})
+    .exec((e, transactions) => {
+      if (e) {
+        return res.status(400).send(e);
+      }
+
+      if (transactions) {
+        res.status(200).json(transactions);
+      }
+    });
+};
+
 module.exports = {
   createTransaction,
+  getTransactions
 };

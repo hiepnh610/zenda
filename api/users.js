@@ -87,7 +87,7 @@ const increasePointsUserReceive = (userReceiveQuery, quantity) => {
   );
 };
 
-const getUserList = async (req, res) => {
+const getAccountList = async (req, res) => {
   User
     .find({})
     .select('user_id give_bag receive_bag -_id')
@@ -122,5 +122,5 @@ module.exports = {
   getOrCreate,
   getUserInfo,
   updateUser,
-  getUserList
+  getAccountList
 };
