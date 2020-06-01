@@ -82,13 +82,34 @@ const inviteUserToChannel = (channelId, userId) => {
 const getTransactions = (req, res) => {
   Transaction
     .find({})
-    .exec((e, transactions) => {
+    .exec(async (e, transactions) => {
       if (e) {
         return res.status(400).send(e);
       }
 
-      if (transactions) {
-        res.status(200).json(transactions);
+      if (transactions.length) {
+        const data = await transactions.map(async (tran) => {
+          const userRequestInfo = await web.users.info({
+            user: tran.user_request_id
+          });
+          const userReceiveInfo = await web.users.info({
+            user: tran.user_receive_id
+          });
+
+          if (
+            userRequestInfo.ok && userRequestInfo.user &&
+            userReceiveInfo.ok && userReceiveInfo.user
+          ) {
+            const userRequestName = userRequestInfo.user.profile.display_name;
+
+            return {
+              user_request_name: userRequestName
+            }
+          }
+        });
+        console.log(data);
+
+        // res.status(200).json(data);
       }
     });
 };
