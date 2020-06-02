@@ -17,6 +17,16 @@ const UserSchema = new Schema(
     receive_bag: {
       type: Number,
       require: true
+    },
+
+    display_name: {
+      type: String,
+      required: true
+    },
+
+    display_name: {
+      type: String,
+      required: true
     }
   },
 

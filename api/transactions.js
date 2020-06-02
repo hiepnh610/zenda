@@ -1,6 +1,8 @@
 const { WebClient } = require('@slack/web-api');
 
 const Transaction = require('../models/transactions');
+const User = require('../models/users');
+const { getUserInfo } = require('./users');
 const CONSTANTS = require('../constants');
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
@@ -87,30 +89,28 @@ const getTransactions = (req, res) => {
         return res.status(400).send(e);
       }
 
-      if (transactions.length) {
-        const data = await transactions.map(async (tran) => {
-          const userRequestInfo = await web.users.info({
-            user: tran.user_request_id
-          });
-          const userReceiveInfo = await web.users.info({
-            user: tran.user_receive_id
-          });
+      const response = await Promise.all(
+        transactions.map(async (transaction) => {
+          const {
+            user_receive_id,
+            user_request_id,
+            quantity,
+            created_at
+          } = transaction;
 
-          if (
-            userRequestInfo.ok && userRequestInfo.user &&
-            userReceiveInfo.ok && userReceiveInfo.user
-          ) {
-            const userRequestName = userRequestInfo.user.profile.display_name;
+          const userRequestInfo = await getUserInfo(user_request_id);
+          const userReceiveInfo = await getUserInfo(user_receive_id);
 
-            return {
-              user_request_name: userRequestName
-            }
-          }
-        });
-        console.log(data);
+          return {
+            user_receive_name: userReceiveInfo.display_name,
+            user_request_name: userRequestInfo.display_name,
+            quantity,
+            created_at
+          };
+        })
+      );
 
-        // res.status(200).json(data);
-      }
+      res.status(200).json(response);
     });
 };
 

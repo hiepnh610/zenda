@@ -19,7 +19,8 @@ const createUser = async (userId) => {
   const user = new User({
     give_bag: 10,
     receive_bag: 0,
-    user_id: slackUserInfo.id
+    user_id: slackUserInfo.id,
+    display_name: slackUserInfo.profile.display_name
   });
 
   return user.save();
@@ -90,30 +91,11 @@ const increasePointsUserReceive = (userReceiveQuery, quantity) => {
 const getAccountList = async (req, res) => {
   User
     .find({})
-    .select('user_id give_bag receive_bag -_id')
-    .exec(async (e, users) => {
+    .exec((e, users) => {
       if (e) return res.status(400).send(e);
 
       if (users) {
-        const usersInSlackInfo = await web.users.list();
-
-        if (usersInSlackInfo.ok && usersInSlackInfo.members) {
-          const mergeUserInfo = users.flatMap((user) => {
-            return usersInSlackInfo.members.map((member) => {
-              if (user.user_id === member.id) {
-                return {
-                  display_name: member.profile.display_name,
-                  give_bag: user.give_bag,
-                  receive_bag: user.receive_bag
-                }
-              }
-            });
-          });
-
-          const filterData = mergeUserInfo.filter(data => data != null);
-
-          res.status(200).json(filterData);
-        }
+        res.status(200).json(users);
       }
     });
 };
