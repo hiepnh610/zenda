@@ -88,7 +88,7 @@ const increasePointsUserReceive = (userReceiveQuery, quantity) => {
   );
 };
 
-const getAccountList = async (req, res) => {
+const getUserList = async (req, res) => {
   User
     .find({})
     .exec((e, users) => {
@@ -100,9 +100,24 @@ const getAccountList = async (req, res) => {
     });
 };
 
+const deleteUser = (req, res) => {
+  const userId = req.params.id;
+
+  if (userId) {
+    const query = { '_id': userId };
+
+    User.deleteOne(query, (e) => {
+      if (e) return res.status(400).send(e);
+
+      res.status(200).json({ message: 'User deleted.' });
+    });
+  }
+};
+
 module.exports = {
   getOrCreate,
   getUserInfo,
   updateUser,
-  getAccountList
+  getUserList,
+  deleteUser
 };

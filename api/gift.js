@@ -22,7 +22,22 @@ const getGifts = (req, res) => {
     });
 };
 
+const deleteGift = (req, res) => {
+  const giftId = req.params.id;
+
+  if (giftId) {
+    const query = { '_id': giftId };
+
+    Gift.deleteOne(query, (e) => {
+      if (e) return res.status(400).send(e);
+
+      res.status(200).json({ message: 'Gift deleted.' });
+    });
+  }
+};
+
 module.exports = {
   createGift,
-  getGifts
+  getGifts,
+  deleteGift
 };

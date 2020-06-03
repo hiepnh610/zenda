@@ -12,12 +12,20 @@ router
   .post(interactive.handleInteractiveFromSlack);
 
 router
-  .route('/accounts')
-  .get(user.getAccountList);
+  .route('/users')
+  .get(user.getUserList);
+
+router
+  .route('/user/:id')
+  .delete(user.deleteUser);
 
 router
   .route('/gifts')
   .get(gift.getGifts);
+
+router
+  .route('/gift/:id')
+  .delete(gift.deleteGift);
 
 router
   .route('/transactions')
