@@ -1,15 +1,14 @@
-const db = require("../models");
-const User = db.users;
+const DB = require("../models");
+const User = DB.User;
 
-exports.create = (payload) => {
-  return new Promise((resolve, reject) => {
-    User
-      .create(payload)
-      .then((data) => {
-        resolve(data);
-      })
-      .catch((e) => {
-        return reject(e);
-      });
-  });
+exports.create = async (payload) => {
+  try {
+    const user = await User.create(payload);
+
+    return user.dataValues;
+  } catch(e) {
+    return {
+      error: e
+    };
+  }
 };

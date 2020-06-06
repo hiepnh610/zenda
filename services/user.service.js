@@ -17,13 +17,5 @@ exports.create = async (userId) => {
     display_name: slackUserInfo.profile.display_name
   };
 
-  return new Promise((resolve, reject) => {
-    userRepository.create(user, (e, res) => {
-      if (e) {
-        return reject(e);
-      }
-
-      resolve(res);
-    });
-  });
+  return await userRepository.create(user);
 };
