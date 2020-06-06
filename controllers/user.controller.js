@@ -1,6 +1,6 @@
 const userService = require('../services/user.service');
 
-exports.create = async (req, res) => {
+exports.findOrCreate = async (req, res) => {
   const userId = req.body.user_id;
 
   if (!userId) {
@@ -11,7 +11,7 @@ exports.create = async (req, res) => {
     return;
   }
 
-  const userInfo = await userService.create(userId);
+  const userInfo = await userService.findOrCreate(userId);
 
   if (userInfo.error) {
     res.status(400).json({ message: userInfo.error });
@@ -19,5 +19,5 @@ exports.create = async (req, res) => {
     return;
   }
 
-  res.status(201).json(userInfo);
+  res.status(200).json(userInfo);
 };

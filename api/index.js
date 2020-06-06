@@ -9,7 +9,7 @@ const user = require('../controllers/user.controller');
 
 router
   .route('/users')
-  .get(user.create);
+  .get(user.findOrCreate);
 
 // router
 //   .route('/user/:id')

@@ -16,6 +16,8 @@ const {
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
+const userController = require('../controllers/user.controller');
+
 const showModal = async (req, res) => {
   if (req && req.body && req.body.payload) {
     const payload = JSON.parse(req.body.payload);

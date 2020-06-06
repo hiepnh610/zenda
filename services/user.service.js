@@ -5,7 +5,7 @@ const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
 const userRepository = require('../repository/user.repository');
 
-exports.create = async (userId) => {
+exports.findOrCreate = async (userId) => {
   const param = { user: userId };
   const getSlackUserInfo = await web.users.info(param);
   const slackUserInfo = getSlackUserInfo.user;
@@ -17,5 +17,7 @@ exports.create = async (userId) => {
     display_name: slackUserInfo.profile.display_name
   };
 
-  return await userRepository.create(user);
+  const data = await userRepository.findOrCreate(user);
+
+  return data;
 };
