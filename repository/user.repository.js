@@ -26,3 +26,5 @@ exports.findOrCreate = async (payload) => {
     };
   }
 };
+
+exports.updateUserBag = async (userIdRequest, userIdReceive, quantity) => {};

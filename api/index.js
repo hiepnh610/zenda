@@ -1,15 +1,15 @@
 const express = require('express');
 const router  = express.Router();
 
-const user = require('../controllers/user.controller');
-
-// router
-//   .route('/interactive')
-//   .post(interactive.handleInteractiveFromSlack);
+const interactive = require('../controllers/interactive.controller');
 
 router
-  .route('/users')
-  .get(user.findOrCreate);
+  .route('/interactive')
+  .post(interactive);
+
+// router
+//   .route('/users')
+//   .get(user.findOrCreate);
 
 // router
 //   .route('/user/:id')

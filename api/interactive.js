@@ -1,11 +1,11 @@
 const { WebClient } = require('@slack/web-api');
 
-const {
-  getOrCreate,
-  updateUser
-} = require('./users');
-const { createTransaction } = require('./transactions');
-const { createGift } = require('./gift');
+// const {
+//   getOrCreate,
+//   updateUser
+// } = require('./users');
+// const { createTransaction } = require('./transactions');
+// const { createGift } = require('./gift');
 const UTILS = require('../utils');
 const CONSTANTS  = require('../constants');
 const {
@@ -31,7 +31,7 @@ const showModal = async (req, res) => {
       if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIVE) {
         const userRequest = payload.user;
         const userIdRequest = userRequest.id;
-        const getUserRequestInfo = await getOrCreate(userIdRequest);
+        const getUserRequestInfo = await userController.findOrCreate(userIdRequest);
 
         modal.view = giveTemplate(
           getUserRequestInfo.give_bag,
@@ -108,7 +108,7 @@ const giveTheGift = async (payload) => {
     return;
   }
 
-  const getUserRequestInfo = await getOrCreate(userIdRequest);
+  const getUserRequestInfo = await userController.findOrCreate(userIdRequest);
   const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
 
   if (userIdRequest === userIdReceive) {
@@ -192,7 +192,7 @@ const checkBag = (userInfo, quantity) => {
 
 const handleInteractiveFromSlack = (req, res) => {
   showModal(req, res);
-  handleDataSubmit(req);
+  // handleDataSubmit(req);
 };
 
 module.exports = {
