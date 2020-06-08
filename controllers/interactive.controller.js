@@ -49,7 +49,6 @@ const giveTheGift = async (payload) => {
   const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
   const valueQuantity = parseInt(UTILS.findValue(valuesRequest, 'quantity').value);
   const userMessage = UTILS.findValue(valuesRequest, 'message').value;
-  const isIntNumber = Number.isInteger(valueQuantity);
 
   const isDeleted = await checkUserIsActive(userIdReceive);
 
@@ -71,9 +70,6 @@ const giveTheGift = async (payload) => {
     return;
   }
 
-  const getUserRequestInfo = await userController.findOrCreate(userIdRequest);
-  const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
-
   if (userIdRequest === userIdReceive) {
     modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
 
@@ -81,6 +77,19 @@ const giveTheGift = async (payload) => {
 
     return;
   }
+
+  const quantityIsInteger = Number.isInteger(valueQuantity);
+
+  if (!quantityIsInteger) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  const getUserRequestInfo = await userController.findOrCreate(userIdRequest);
+  const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
 
   if (!checkUserRequestBag) {
     modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
@@ -90,20 +99,13 @@ const giveTheGift = async (payload) => {
     return;
   }
 
-  // if (checkUserRequestBag && isIntNumber) {
-  //   const transactionData = await updateUser(
-  //     userIdRequest,
-  //     userIdReceive,
-  //     valueQuantity
-  //   );
+  console.log('interactive');
 
-  //   if (transactionData) {
-  //     createTransaction({
-  //       ...transactionData,
-  //       text: userMessage
-  //     });
-  //   }
-  // }
+  return await userController.updateUserBag(
+    userIdRequest,
+    userIdReceive,
+    valueQuantity
+  );
 };
 
 const showModal = async (req, res) => {

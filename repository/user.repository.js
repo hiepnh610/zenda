@@ -1,7 +1,9 @@
+const sequelize = require('sequelize');
+
 const DB = require("../models");
 const User = DB.User;
 
-exports.findOrCreate = async (payload) => {
+const findOrCreate = async (payload) => {
   try {
     const {
       user_id,
@@ -27,4 +29,47 @@ exports.findOrCreate = async (payload) => {
   }
 };
 
-exports.updateUserBag = async (userIdRequest, userIdReceive, quantity) => {};
+const updateUserBag = async (userIdRequest, userIdReceive, quantity) => {
+  let transaction;
+
+  try {
+    transaction = await sequelize.transaction();
+    const userRequestQuery = { user_id: userIdRequest };
+    const userReceiveQuery = { user_id: userIdReceive };
+
+    await User
+      .findOne({ where: userRequestQuery })
+      .then((user) => {
+        console.log('userIdRequest', user);
+        if (user) {
+          return user.update({
+            give_bag: user.give_bag - quantity
+          }, transaction);
+        }
+      });
+
+    await User
+      .findOne({ where: userReceiveQuery })
+      .then((user) => {
+        console.log('userIdReceive', user);
+        if (user) {
+          return user.update({
+            receive_bag: user.receive_bag + quantity
+          }, transaction);
+        }
+      });
+
+    await transaction.commit();
+  } catch (e) {
+    if (transaction) await transaction.rollback();
+
+    return {
+      error: e
+    };
+  }
+};
+
+module.exports = {
+  findOrCreate,
+  updateUserBag
+};

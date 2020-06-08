@@ -1,9 +1,14 @@
 const userService = require('../services/user.service');
 
-exports.findOrCreate = async (userId) => {
+const findOrCreate = async (userId) => {
   return await userService.findOrCreate(userId);
 };
 
-exports.updateUserBag = async (userIdRequest, userIdReceive, quantity) => {
-  return await userService.findOrCreate(userIdReceive);
+const updateUserBag = async (userRequestId, userReceiveId, quantity) => {
+  return await userService.updateUserBag(userRequestId, userReceiveId, quantity);
+};
+
+module.exports = {
+  findOrCreate,
+  updateUserBag
 };
