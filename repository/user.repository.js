@@ -1,5 +1,3 @@
-const sequelize = require('sequelize');
-
 const DB = require("../models");
 const User = DB.User;
 
@@ -30,39 +28,34 @@ const findOrCreate = async (payload) => {
 };
 
 const updateUserBag = async (userIdRequest, userIdReceive, quantity) => {
-  let transaction;
-
   try {
-    transaction = await sequelize.transaction();
     const userRequestQuery = { user_id: userIdRequest };
     const userReceiveQuery = { user_id: userIdReceive };
 
-    await User
-      .findOne({ where: userRequestQuery })
-      .then((user) => {
-        console.log('userIdRequest', user);
-        if (user) {
-          return user.update({
-            give_bag: user.give_bag - quantity
-          }, transaction);
-        }
-      });
+    const result = await DB.sequelize.transaction(async (transaction) => {
+      const userRequestInfo = await User.findOne(
+        { where: userRequestQuery }
+      );
+      const userReceiveInfo = await User.findOne(
+        { where: userReceiveQuery }
+      );
 
-    await User
-      .findOne({ where: userReceiveQuery })
-      .then((user) => {
-        console.log('userIdReceive', user);
-        if (user) {
-          return user.update({
-            receive_bag: user.receive_bag + quantity
-          }, transaction);
-        }
-      });
+      await userRequestInfo.update({
+        give_bag: userRequestInfo.give_bag - quantity
+      }, { transaction });
 
-    await transaction.commit();
+      await userReceiveInfo.update({
+        receive_bag: userReceiveInfo.receive_bag + quantity
+      }, { transaction });
+
+      return Promise.all([
+        userRequestInfo,
+        userReceiveInfo
+      ]);
+    });
+
+    return result;
   } catch (e) {
-    if (transaction) await transaction.rollback();
-
     return {
       error: e
     };

@@ -5,6 +5,8 @@ const findOrCreate = async (userId) => {
 };
 
 const updateUserBag = async (userRequestId, userReceiveId, quantity) => {
+  await userService.findOrCreate(userReceiveId);
+
   return await userService.updateUserBag(userRequestId, userReceiveId, quantity);
 };
 

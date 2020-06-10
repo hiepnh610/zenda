@@ -99,8 +99,6 @@ const giveTheGift = async (payload) => {
     return;
   }
 
-  console.log('interactive');
-
   return await userController.updateUserBag(
     userIdRequest,
     userIdReceive,
