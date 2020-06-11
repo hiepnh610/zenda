@@ -11,14 +11,14 @@ module.exports = {
       user_id: {
         type: Sequelize.STRING
       },
+      display_name: {
+        type: Sequelize.STRING
+      },
       give_bag: {
         type: Sequelize.INTEGER
       },
       receive_bag: {
         type: Sequelize.INTEGER
-      },
-      display_name: {
-        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,

@@ -22,8 +22,8 @@ const findOrCreate = async (userId) => {
   return user;
 };
 
-const updateUserBag = async (userIdRequest, userIdReceive, quantity) => {
-  return userRepository.updateUserBag(userIdRequest, userIdReceive, quantity);
+const updateUserBag = async (userIdRequest, userIdReceive, amount, message) => {
+  return userRepository.updateUserBag(userIdRequest, userIdReceive, amount, message);
 };
 
 module.exports = {

@@ -11,10 +11,10 @@ const {
   generalTemplate
 } = require('../templates');
 
-const checkBag = (userInfo, quantity) => {
+const checkBag = (userInfo, amount) => {
   const giveBag = userInfo.give_bag;
 
-  return (giveBag > 0 && giveBag >= quantity);
+  return (giveBag > 0 && giveBag >= amount);
 };
 
 const checkUserIsActive = async (userId) => {
@@ -47,7 +47,7 @@ const giveTheGift = async (payload) => {
   const valuesRequest = slackView.state.values;
 
   const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
-  const valueQuantity = parseInt(UTILS.findValue(valuesRequest, 'quantity').value);
+  const pointsAmount = parseInt(UTILS.findValue(valuesRequest, 'amount').value);
   const userMessage = UTILS.findValue(valuesRequest, 'message').value;
 
   const isDeleted = await checkUserIsActive(userIdReceive);
@@ -78,9 +78,9 @@ const giveTheGift = async (payload) => {
     return;
   }
 
-  const quantityIsInteger = Number.isInteger(valueQuantity);
+  const amountIsInteger = Number.isInteger(pointsAmount);
 
-  if (!quantityIsInteger) {
+  if (!amountIsInteger) {
     modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
 
     web.views.open(modal);
@@ -89,7 +89,7 @@ const giveTheGift = async (payload) => {
   }
 
   const getUserRequestInfo = await userController.findOrCreate(userIdRequest);
-  const checkUserRequestBag = checkBag(getUserRequestInfo, valueQuantity);
+  const checkUserRequestBag = checkBag(getUserRequestInfo, pointsAmount);
 
   if (!checkUserRequestBag) {
     modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
@@ -102,7 +102,8 @@ const giveTheGift = async (payload) => {
   return await userController.updateUserBag(
     userIdRequest,
     userIdReceive,
-    valueQuantity
+    pointsAmount,
+    userMessage
   );
 };
 

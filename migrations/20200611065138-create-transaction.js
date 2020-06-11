@@ -14,10 +14,10 @@ module.exports = {
       user_receive_id: {
         type: Sequelize.STRING
       },
-      quantity: {
+      amount: {
         type: Sequelize.INTEGER
       },
-      text: {
+      message: {
         type: Sequelize.STRING
       },
       createdAt: {

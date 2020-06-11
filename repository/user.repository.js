@@ -1,5 +1,6 @@
 const DB = require("../models");
 const User = DB.User;
+const Transaction = DB.Transaction;
 
 const findOrCreate = async (payload) => {
   try {
@@ -27,34 +28,41 @@ const findOrCreate = async (payload) => {
   }
 };
 
-const updateUserBag = async (userIdRequest, userIdReceive, quantity) => {
+const updateUserBag = async (userIdRequest, userIdReceive, amount, message) => {
   try {
     const userRequestQuery = { user_id: userIdRequest };
     const userReceiveQuery = { user_id: userIdReceive };
 
-    const result = await DB.sequelize.transaction(async (transaction) => {
+    await DB.sequelize.transaction(async (transaction) => {
       const userRequestInfo = await User.findOne(
-        { where: userRequestQuery }
+        { where: userRequestQuery },
+        { transaction }
       );
       const userReceiveInfo = await User.findOne(
-        { where: userReceiveQuery }
+        { where: userReceiveQuery },
+        { transaction }
       );
 
-      await userRequestInfo.update({
-        give_bag: userRequestInfo.give_bag - quantity
-      }, { transaction });
+      await userRequestInfo.update(
+        { give_bag: userRequestInfo.give_bag - amount },
+        { transaction }
+      );
 
-      await userReceiveInfo.update({
-        receive_bag: userReceiveInfo.receive_bag + quantity
-      }, { transaction });
+      await userReceiveInfo.update(
+        { receive_bag: userReceiveInfo.receive_bag + amount },
+        { transaction }
+      );
 
-      return Promise.all([
-        userRequestInfo,
-        userReceiveInfo
-      ]);
+      await Transaction.create(
+        {
+          user_request_id: userIdRequest,
+          user_receive_id: userIdReceive,
+          amount,
+          message
+        },
+        { transaction }
+      );
     });
-
-    return result;
   } catch (e) {
     return {
       error: e

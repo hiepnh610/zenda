@@ -37,7 +37,7 @@ const giveTemplate = (giveBag, receiveBag) => {
         type: 'input',
         element: {
           type: 'plain_text_input',
-          action_id: 'quantity',
+          action_id: 'amount',
           placeholder: {
             type: 'plain_text',
             text: 'Số bimbim muốn gửi tặng.',
