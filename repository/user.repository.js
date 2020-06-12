@@ -33,7 +33,7 @@ const updateUserBag = async (userIdRequest, userIdReceive, amount, message) => {
     const userRequestQuery = { user_id: userIdRequest };
     const userReceiveQuery = { user_id: userIdReceive };
 
-    await DB.sequelize.transaction(async (transaction) => {
+    return await DB.sequelize.transaction(async (transaction) => {
       const userRequestInfo = await User.findOne(
         { where: userRequestQuery },
         { transaction }
@@ -53,7 +53,7 @@ const updateUserBag = async (userIdRequest, userIdReceive, amount, message) => {
         { transaction }
       );
 
-      await Transaction.create(
+      return await Transaction.create(
         {
           user_request_id: userIdRequest,
           user_receive_id: userIdReceive,
