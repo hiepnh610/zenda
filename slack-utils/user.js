@@ -4,25 +4,33 @@ const CONSTANTS  = require('../constants');
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
-const checkUserIsActive = async (userId) => {
+const getUserInfo = async (userId) => {
   const query = { user: userId };
   const userInfo = await web.users.info(query);
-
-  if (userInfo.ok && userInfo.user) {
-    return !!(userInfo.user.deleted);
-  }
+  return userInfo;
 };
 
-const checkUserIsHuman = async (userId) => {
-  const query = { user: userId };
-  const userInfo = await web.users.info(query);
+const checkUserIsValid = async (userId) => {
+  const userInfo = await getUserInfo(userId);
 
   if (userInfo.ok && userInfo.user) {
-    return !!(userInfo.user.is_bot);
+    if (userInfo.user.deleted) {
+      return {
+        error: CONSTANTS.SLACK_USER_STATUS.USER_DEACTIVATED
+      }
+    }
+
+    if (userInfo.user.is_bot) {
+      return {
+        error: CONSTANTS.SLACK_USER_STATUS.USER_NOT_HUMAN
+      }
+    }
+
+    return userInfo.user;
   }
 };
 
 module.exports = {
-  checkUserIsActive,
-  checkUserIsHuman
+  getUserInfo,
+  checkUserIsValid
 };

@@ -1,6 +1,7 @@
 const { PORT } = require('./port');
 const { MESSAGES } = require('./messages');
 const { SLACK_APP_OPTIONS } = require('./slack-options');
+const { SLACK_USER_STATUS } = require('./slack-status');
 const {
   SHORTCUT,
   VIEW_SUBMISSION,
@@ -15,5 +16,6 @@ module.exports = {
   VIEW_SUBMISSION,
   MODAL_CALLBACK_ID,
   MESSAGES,
-  SHORT_CUT_CALLBACK_ID
+  SHORT_CUT_CALLBACK_ID,
+  SLACK_USER_STATUS
 };

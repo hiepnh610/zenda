@@ -10,24 +10,19 @@ const slackUtil = require('../slack-utils');
 const { generalTemplate } = require('../templates');
 
 const findOrCreate = async (userId) => {
-  try {
-    const param = { user: userId };
-    const getSlackUserInfo = await web.users.info(param);
-    const slackUserInfo = getSlackUserInfo.user;
+  const getSlackUserInfo = await slackUtil.user.getUserInfo(userId);
+  const slackUserInfo = getSlackUserInfo.user;
 
-    const data = {
-      give_bag: 10,
-      receive_bag: 0,
-      user_id: slackUserInfo.id,
-      display_name: slackUserInfo.profile.display_name
-    };
+  const data = {
+    give_bag: 10,
+    receive_bag: 0,
+    user_id: slackUserInfo.id,
+    display_name: slackUserInfo.profile.display_name
+  };
 
-    const user = await userRepository.findOrCreate(data);
+  const user = await userRepository.findOrCreate(data);
 
-    return user;
-  } catch (error) {
-    return { error }
-  }
+  return user;
 };
 
 const checkBag = (userInfo, amount) => {
@@ -37,93 +32,90 @@ const checkBag = (userInfo, amount) => {
 };
 
 const giveTheGift = async (payload) => {
-  try {
-    const modal = {
-      "trigger_id": payload.trigger_id
-    };
-    const slackView = payload.view;
+  const modal = {
+    "trigger_id": payload.trigger_id
+  };
+  const slackView = payload.view;
 
-    const userRequest = payload.user;
-    const userIdRequest = userRequest.id;
+  const userRequest = payload.user;
+  const userIdRequest = userRequest.id;
 
-    const valuesRequest = slackView.state.values;
+  const valuesRequest = slackView.state.values;
 
-    const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
-    const pointsAmount = parseInt(UTILS.findValue(valuesRequest, 'amount').value);
-    const userMessage = UTILS.findValue(valuesRequest, 'message').value;
+  const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
+  const pointsAmount = parseInt(UTILS.findValue(valuesRequest, 'amount').value);
+  const userMessage = UTILS.findValue(valuesRequest, 'message').value;
 
-    const isDeactivated = await slackUtil.user.checkUserIsActive(userIdReceive);
+  const amountIsInteger = Number.isInteger(pointsAmount);
 
-    await findOrCreate(userIdReceive);
+  if (!amountIsInteger) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
 
-    if (isDeactivated) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER);
+    web.views.open(modal);
 
-      web.views.open(modal);
-
-      return;
-    }
-
-    const isBot = await slackUtil.user.checkUserIsHuman(userIdReceive);
-
-    if (isBot) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
-
-      web.views.open(modal);
-
-      return;
-    }
-
-    if (userIdRequest === userIdReceive) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
-
-      web.views.open(modal);
-
-      return;
-    }
-
-    const amountIsInteger = Number.isInteger(pointsAmount);
-
-    if (!amountIsInteger) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
-
-      web.views.open(modal);
-
-      return;
-    }
-
-    const getUserRequestInfo = await findOrCreate(userIdRequest);
-    const checkUserRequestBag = checkBag(getUserRequestInfo, pointsAmount);
-
-    if (!checkUserRequestBag) {
-      modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
-
-      web.views.open(modal);
-
-      return;
-    }
-
-    return {
-      userIdRequest,
-      userIdReceive,
-      amount: pointsAmount,
-      message: userMessage
-    };
-  } catch (error) {
-    return { error }
+    return;
   }
+
+  const getUserRequestInfo = await findOrCreate(userIdRequest);
+  const checkUserRequestBag = checkBag(getUserRequestInfo, pointsAmount);
+
+  if (!checkUserRequestBag) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  const checkUserIsValid = await slackUtil.user.checkUserIsValid(userIdReceive);
+
+  if (checkUserIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_DEACTIVATED) {
+    modal.view = generalTemplate(
+      CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER
+    );
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  if (checkUserIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_NOT_HUMAN) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  if (userIdRequest === userIdReceive) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  await findOrCreate(userIdReceive);
+
+  return {
+    userIdRequest,
+    userIdReceive,
+    amount: pointsAmount,
+    message: userMessage
+  };
 };
 
 const updateUserBag = async (payload) => {
-  try {
-    const giveData = await giveTheGift(payload);
+  const giveData = await giveTheGift(payload);
+
+  if (giveData) {
     const giftTransaction = await userRepository.updateUserBag(giveData);
 
-    slackUtil.conversation.sendMessageToChannel(giftTransaction);
+    if (giftTransaction) {
+      slackUtil.conversation.sendMessageToChannel(giftTransaction);
+    }
 
     return giftTransaction;
-  } catch (error) {
-    return { error }
   }
 };
 

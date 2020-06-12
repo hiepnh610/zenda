@@ -30,8 +30,8 @@ const showModal = async (req, res) => {
       const userIdRequest = userRequest.id;
       const getUserRequestInfo = await userService.findOrCreate(userIdRequest);
 
-      if (getUserRequestInfo.error) {
-        res.status(400).json({ message: getUserRequestInfo.error });
+      if (getUserRequestInfo && getUserRequestInfo.error) {
+        res.status(400).send({ message: getUserRequestInfo.error });
 
         return;
       }
@@ -67,8 +67,8 @@ const handleDataSubmit = async (req, res) => {
     if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIVE) {
       const giftTransaction = await userService.updateUserBag(payload);
 
-      if (giftTransaction.error) {
-        res.status(400).json({ message: giftTransaction.error });
+      if (giftTransaction && giftTransaction.error) {
+        res.status(400).send({ message: giftTransaction.error });
 
         return;
       }
