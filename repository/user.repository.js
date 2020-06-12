@@ -21,15 +21,20 @@ const findOrCreate = async (payload) => {
     });
 
     return user[0].dataValues;
-  } catch(e) {
-    return {
-      error: e
-    };
+  } catch (error) {
+    return { error };
   }
 };
 
-const updateUserBag = async (userIdRequest, userIdReceive, amount, message) => {
+const updateUserBag = async (giveData) => {
   try {
+    const {
+      userIdRequest,
+      userIdReceive,
+      amount,
+      message
+    } = giveData;
+
     const userRequestQuery = { user_id: userIdRequest };
     const userReceiveQuery = { user_id: userIdReceive };
 
@@ -63,10 +68,8 @@ const updateUserBag = async (userIdRequest, userIdReceive, amount, message) => {
         { transaction }
       );
     });
-  } catch (e) {
-    return {
-      error: e
-    };
+  } catch (error) {
+    return { error };
   }
 };
 
