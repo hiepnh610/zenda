@@ -73,7 +73,18 @@ const updateUserBag = async (giveData) => {
   }
 };
 
+const getUserList = async () => {
+  try {
+    const users = await User.findAll();
+
+    return users;
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   findOrCreate,
-  updateUserBag
+  updateUserBag,
+  getUserList
 };

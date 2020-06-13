@@ -152,8 +152,15 @@ const giftClaim = (payload) => {
   slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
 };
 
+const getUserList = async () => {
+  const users = await userRepository.getUserList();
+
+  return users;
+};
+
 module.exports = {
   findOrCreate,
   updateUserBag,
-  giftClaim
+  giftClaim,
+  getUserList
 };
