@@ -2,11 +2,14 @@ const { WebClient } = require('@slack/web-api');
 
 const CONSTANTS  = require('../constants');
 const userService = require('../services/user.service');
-const slackUtil = require('../slack-utils');
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
-const { giveTemplate } = require('../templates');
+const {
+  giftClaimTemplate,
+  giveTemplate,
+  checkBagTemplate
+} = require('../templates');
 
 const showModal = async (req, res) => {
   if (!req.body.payload) {
@@ -25,9 +28,10 @@ const showModal = async (req, res) => {
   };
 
   if (activityType === CONSTANTS.SHORTCUT) {
+    const userRequest = payload.user;
+    const userIdRequest = userRequest.id;
+
     if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIVE) {
-      const userRequest = payload.user;
-      const userIdRequest = userRequest.id;
       const getUserRequestInfo = await userService.findOrCreate(userIdRequest);
 
       if (getUserRequestInfo && getUserRequestInfo.error) {
@@ -37,6 +41,23 @@ const showModal = async (req, res) => {
       }
 
       modal.view = giveTemplate(
+        getUserRequestInfo.give_bag,
+        getUserRequestInfo.receive_bag
+      );
+
+      web.views.open(modal);
+    }
+
+    if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIFT_CLAIM) {
+      modal.view = giftClaimTemplate;
+
+      web.views.open(modal);
+    }
+
+    if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.CHECK_BAG) {
+      const getUserRequestInfo = await userService.findOrCreate(userIdRequest);
+
+      modal.view = checkBagTemplate(
         getUserRequestInfo.give_bag,
         getUserRequestInfo.receive_bag
       );
@@ -74,9 +95,9 @@ const handleDataSubmit = async (req, res) => {
       }
     }
 
-    // if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_REQUEST) {
-    //   requestGift(payload);
-    // }
+    if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_CLAIM) {
+      userService.giftClaim(payload);
+    }
   }
 };
 

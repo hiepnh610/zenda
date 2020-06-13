@@ -72,7 +72,7 @@ const giveTemplate = (giveBag, receiveBag) => {
           type: 'plain_text_input',
           action_id: 'message',
           multiline: true,
-          min_length: 20,
+          min_length: 10,
           placeholder: {
             type: 'plain_text',
             text: 'Viết lời yêu thương tới đồng nghiệp.',

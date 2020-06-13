@@ -20,31 +20,34 @@ const inviteUserToChannel = (channelId, userId) => {
   web.conversations.invite(params);
 };
 
-const checkUserInChannel = async (channelId, userId) => {
+const checkUserInChannel = async (channelId, userList) => {
   const usersInChannel = await web.conversations.members({
     channel: channelId
   });
 
-  if (usersInChannel.ok && usersInChannel.members.length) {
-    const isUserInChannel = await usersInChannel.members.find((member) => {
-      return member === userId;
-    });
+  if (usersInChannel.ok && usersInChannel.members.length && userList.length) {
+    userList.forEach((user) => {
+      const isUserInChannel = usersInChannel.members.find((member) => {
+        return member === user;
+      });
 
-    if (!isUserInChannel) {
-      inviteUserToChannel(channelId, userId);
-    }
+      if (!isUserInChannel) {
+        inviteUserToChannel(channelId, user);
+      }
+    });
   }
 };
 
-const sendMessageToChannel = async (giftTransaction) => {
+const sendMessageToChannel = async (dataToSendMessage) => {
   const targetChannel = await getChannelInfo();
 
   if (targetChannel.length) {
     const channelId = targetChannel[0].id;
-    const userRequestId = giftTransaction.user_request_id;
-    const userReceiveId = giftTransaction.user_receive_id;
-    const amount = giftTransaction.amount;
-    const message = giftTransaction.message;
+    const {
+      user_request_id,
+      user_receive_id,
+      message
+    } = dataToSendMessage;
 
     const params = {
       channel: channelId,
@@ -54,7 +57,7 @@ const sendMessageToChannel = async (giftTransaction) => {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<@${userRequestId}> đã gửi tặng <@${userReceiveId}> ${amount} bimbim. Với lời nhắn: \n>${message}`,
+            text: message
           },
         },
       ],
@@ -63,8 +66,12 @@ const sendMessageToChannel = async (giftTransaction) => {
     const isMessageSendSuccess = await web.chat.postMessage(params);
 
     if (isMessageSendSuccess.ok) {
-      checkUserInChannel(channelId, userRequestId);
-      checkUserInChannel(channelId, userReceiveId);
+      const listUserToCheck = [
+        user_request_id,
+        user_receive_id
+      ];
+
+      checkUserInChannel(channelId, listUserToCheck);
     }
   }
 };

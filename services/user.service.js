@@ -112,14 +112,48 @@ const updateUserBag = async (payload) => {
     const giftTransaction = await userRepository.updateUserBag(giveData);
 
     if (giftTransaction) {
-      slackUtil.conversation.sendMessageToChannel(giftTransaction);
+      const {
+        user_request_id,
+        user_receive_id,
+        amount
+      } = giftTransaction;
+      const userMessage = giftTransaction.message;
+      const message = `<@${user_request_id}> đã gửi tặng <@${user_receive_id}> *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
+
+      const dataToSendMessage = {
+        user_request_id,
+        user_receive_id,
+        message
+      };
+
+      slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
     }
 
     return giftTransaction;
   }
 };
 
+const giftClaim = (payload) => {
+  const slackView = payload.view;
+  const userRequest = payload.user;
+  const userIdRequest = userRequest.id;
+  const valuesRequest = slackView.state.values;
+  const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
+  const pointsAmount = parseInt(UTILS.findValue(valuesRequest, 'amount').value);
+  const userMessage = UTILS.findValue(valuesRequest, 'message').value;
+  const message = `<@${userIdRequest}> đã đòi <@${userIdReceive}> *${pointsAmount}* bimbim. Với lời nhắn: \n>${userMessage}`;
+
+  const dataToSendMessage = {
+    user_request_id: userIdRequest,
+    user_receive_id: userIdReceive,
+    message
+  };
+
+  slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
+};
+
 module.exports = {
   findOrCreate,
-  updateUserBag
+  updateUserBag,
+  giftClaim
 };
