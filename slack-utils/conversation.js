@@ -77,7 +77,6 @@ const sendMessageToChannel = async (dataToSendMessage) => {
 };
 
 module.exports = {
-  getChannelInfo,
   checkUserInChannel,
   sendMessageToChannel
 };

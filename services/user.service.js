@@ -31,6 +31,26 @@ const checkBag = (userInfo, amount) => {
   return (giveBag > 0 && giveBag >= amount);
 };
 
+const checkUserIsValid = async (userId) => {
+  const userInfo = await slackUtil.user.getUserInfo(userId);
+
+  if (userInfo.ok && userInfo.user) {
+    if (userInfo.user.deleted) {
+      return {
+        error: CONSTANTS.SLACK_USER_STATUS.USER_DEACTIVATED
+      }
+    }
+
+    if (userInfo.user.is_bot) {
+      return {
+        error: CONSTANTS.SLACK_USER_STATUS.USER_NOT_HUMAN
+      }
+    }
+
+    return userInfo.user;
+  }
+};
+
 const giveTheGift = async (payload) => {
   const modal = {
     "trigger_id": payload.trigger_id
@@ -67,9 +87,9 @@ const giveTheGift = async (payload) => {
     return;
   }
 
-  const checkUserIsValid = await slackUtil.user.checkUserIsValid(userIdReceive);
+  const userIsValid = await checkUserIsValid(userIdReceive);
 
-  if (checkUserIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_DEACTIVATED) {
+  if (userIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_DEACTIVATED) {
     modal.view = generalTemplate(
       CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER
     );
@@ -79,7 +99,7 @@ const giveTheGift = async (payload) => {
     return;
   }
 
-  if (checkUserIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_NOT_HUMAN) {
+  if (userIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_NOT_HUMAN) {
     modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
 
     web.views.open(modal);

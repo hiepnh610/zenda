@@ -10,27 +10,6 @@ const getUserInfo = async (userId) => {
   return userInfo;
 };
 
-const checkUserIsValid = async (userId) => {
-  const userInfo = await getUserInfo(userId);
-
-  if (userInfo.ok && userInfo.user) {
-    if (userInfo.user.deleted) {
-      return {
-        error: CONSTANTS.SLACK_USER_STATUS.USER_DEACTIVATED
-      }
-    }
-
-    if (userInfo.user.is_bot) {
-      return {
-        error: CONSTANTS.SLACK_USER_STATUS.USER_NOT_HUMAN
-      }
-    }
-
-    return userInfo.user;
-  }
-};
-
 module.exports = {
-  getUserInfo,
-  checkUserIsValid
+  getUserInfo
 };
