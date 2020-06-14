@@ -7,6 +7,7 @@ const getTransactionList = async () => {
 
   return transactions.map((transaction) => {
     let userData = {
+      id: transaction.id,
       amount: transaction.amount,
       createdAt: transaction.createdAt,
       message: transaction.message
@@ -26,6 +27,11 @@ const getTransactionList = async () => {
   });
 };
 
+const removeTransaction = async (transactionId) => {
+  return await transactionRepository.removeTransaction(transactionId);
+}
+
 module.exports = {
-  getTransactionList
+  getTransactionList,
+  removeTransaction
 };

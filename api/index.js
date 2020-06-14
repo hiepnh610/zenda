@@ -29,6 +29,10 @@ router
   .route('/transactions')
   .get(transaction.getTransactionList);
 
+router
+  .route('/transactions/:id')
+  .delete(transaction.removeTransaction);
+
 // router
 //   .route('/settings')
 //   .put(settings.resetPoints);

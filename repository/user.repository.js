@@ -43,6 +43,7 @@ const updateUserBag = async (giveData) => {
         { where: userRequestQuery },
         { transaction }
       );
+
       const userReceiveInfo = await User.findOne(
         { where: userReceiveQuery },
         { transaction }
