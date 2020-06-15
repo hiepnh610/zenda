@@ -17,16 +17,48 @@ const createGift = async (payload) => {
   }
 };
 
+const updateGift = async (payload) => {
+  try {
+    const {
+      id,
+      name,
+      image,
+      quantity,
+      points
+    } = payload;
+    const giftId = { id };
+
+    await Gift.update(
+      { name, image, quantity, points },
+      { where: giftId }
+    );
+
+    return { message: 'Update successfully.' };
+  } catch (error) {
+    return { error };
+  };
+};
+
 const removeGift = async (id) => {
   try {
-    await Transaction.destroy({
+    await Gift.destroy({
       where: { id }
     });
 
     return {
       message: 'Delete successfully.'
     };
-  } catch (e) {
+  } catch (error) {
+    return { error };
+  };
+};
+
+const getGiftDetail = async (id) => {
+  try {
+    return await Gift.findOne({
+      where: { id }
+    });
+  } catch (error) {
     return { error };
   };
 };
@@ -34,5 +66,7 @@ const removeGift = async (id) => {
 module.exports = {
   getGiftsList,
   createGift,
-  removeGift
+  removeGift,
+  updateGift,
+  getGiftDetail
 };

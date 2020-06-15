@@ -8,12 +8,22 @@ const createGift = async (payload) => {
   return await giftRepository.createGift(payload);
 };
 
+const updateGift = async (payload) => {
+  return await giftRepository.updateGift(payload);
+};
+
 const removeGift = async (id) => {
   return await giftRepository.removeGift(id);
+};
+
+const getGiftDetail = async (id) => {
+  return await giftRepository.getGiftDetail(id);
 };
 
 module.exports = {
   getGiftsList,
   createGift,
-  removeGift
+  removeGift,
+  updateGift,
+  getGiftDetail
 };

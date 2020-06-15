@@ -58,8 +58,74 @@ const removeGift = async (req, res) => {
   res.status(200).json(gift);
 };
 
+const updateGift = async (req, res) => {
+  const id = req.params.id;
+  const {
+    name,
+    image,
+    quantity,
+    points
+  } = req.body;
+
+  if (!id) {
+    res.status(400).json({ message: 'Cannot get gift information.' });
+  }
+
+  if (!name) {
+    res.status(400).json({ message: 'Cannot get name gift.' });
+  }
+
+  if (!image) {
+    res.status(400).json({ message: 'Cannot get image gift.' });
+  }
+
+  if (!quantity) {
+    res.status(400).json({ message: 'Cannot get quantity gift.' });
+  }
+
+  if (!points) {
+    res.status(400).json({ message: 'Cannot get points gift.' });
+  }
+
+  const payload = {
+    id,
+    name,
+    image,
+    quantity,
+    points
+  };
+
+  const gift = await giftService.updateGift(payload);
+
+  console.log('gift', gift);
+
+  if (gift && gift.error) {
+    res.status(400).json({ message: gift.error });
+  }
+
+  res.status(200).json(gift);
+};
+
+const getGiftDetail = async (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+    res.status(400).json({ message: 'Cannot get gift information.' });
+  }
+
+  const gift = await giftService.getGiftDetail(id);
+
+  if (gift && gift.error) {
+    res.status(400).json({ message: gift.error });
+  }
+
+  res.status(200).json(gift);
+};
+
 module.exports = {
   getGiftsList,
   createGift,
-  removeGift
+  removeGift,
+  updateGift,
+  getGiftDetail
 };

@@ -28,6 +28,14 @@ router
 
 router
   .route('/gift/:id')
+  .get(gift.getGiftDetail);
+
+router
+  .route('/gift/:id')
+  .put(gift.updateGift);
+
+router
+  .route('/gift/:id')
   .delete(gift.removeGift);
 
 router
