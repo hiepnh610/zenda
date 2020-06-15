@@ -3,6 +3,7 @@ const router  = express.Router();
 
 const interactive = require('../controllers/interactive.controller');
 const user = require('../controllers/user.controller');
+const gift = require('../controllers/gift.controller');
 const transaction = require('../controllers/transaction.controller');
 
 router
@@ -17,20 +18,24 @@ router
 //   .route('/user/:id')
 //   .delete(user.deleteUser);
 
-// router
-//   .route('/gifts')
-//   .get(gift.getGifts);
+router
+  .route('/gifts')
+  .get(gift.getGiftsList);
 
-// router
-//   .route('/gift/:id')
-//   .delete(gift.deleteGift);
+router
+  .route('/gift')
+  .post(gift.createGift);
+
+router
+  .route('/gift/:id')
+  .delete(gift.removeGift);
 
 router
   .route('/transactions')
   .get(transaction.getTransactionList);
 
 router
-  .route('/transactions/:id')
+  .route('/transaction/:id')
   .delete(transaction.removeTransaction);
 
 // router

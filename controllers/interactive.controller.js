@@ -14,7 +14,7 @@ const {
 const showModal = async (req, res) => {
   if (!req.body.payload) {
     res.status(400).send({
-      message: "Cannot get user information."
+      message: 'Cannot get user information.'
     });
 
     return;
