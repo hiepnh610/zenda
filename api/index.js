@@ -5,10 +5,15 @@ const interactive = require('../controllers/interactive.controller');
 const user = require('../controllers/user.controller');
 const gift = require('../controllers/gift.controller');
 const transaction = require('../controllers/transaction.controller');
+const admin = require('../controllers/admin.controller');
 
 router
   .route('/interactive')
   .post(interactive);
+
+router
+  .route('/login')
+  .post(admin.login);
 
 router
   .route('/users')
