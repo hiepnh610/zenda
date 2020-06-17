@@ -20,8 +20,6 @@ const removeTransaction = async (req, res) => {
 
   const transaction = await transactionService.removeTransaction(transactionId);
 
-  console.log('transaction', transaction);
-
   if (!transaction) {
     res.status(400).json({ message: 'Cannot delete the transaction, please try again.' });
   }

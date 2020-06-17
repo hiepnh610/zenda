@@ -97,8 +97,6 @@ const updateGift = async (req, res) => {
 
   const gift = await giftService.updateGift(payload);
 
-  console.log('gift', gift);
-
   if (gift && gift.error) {
     res.status(400).json({ message: gift.error });
   }

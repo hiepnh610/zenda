@@ -58,8 +58,6 @@ const getAdminInfo = async (req, res) => {
     return;
   }
 
-  console.log('userInfo', userInfo);
-
   res.status(200).json(userInfo);
 };
 
