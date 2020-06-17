@@ -8,14 +8,14 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING
   }, {
     instanceMethods: {
-      validPassword: function (password) {
-        console.log('this', this);
-        return bcrypt.compare(password, this.password);
+      validPassword: function (password, hash) {
+        return bcrypt.compareSync(password, hash);
       }
     }
   });
   Admin.associate = function(models) {
     // associations can be defined here
   };
+
   return Admin;
 };

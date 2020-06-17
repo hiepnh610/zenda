@@ -6,6 +6,7 @@ const user = require('../controllers/user.controller');
 const gift = require('../controllers/gift.controller');
 const transaction = require('../controllers/transaction.controller');
 const admin = require('../controllers/admin.controller');
+const auth = require('../auth');
 
 router
   .route('/interactive')
@@ -17,42 +18,34 @@ router
 
 router
   .route('/users')
-  .get(user.getUserList);
-
-// router
-//   .route('/user/:id')
-//   .delete(user.deleteUser);
+  .get(auth.verifyToken, user.getUserList);
 
 router
   .route('/gifts')
-  .get(gift.getGiftsList);
+  .get(auth.verifyToken, gift.getGiftsList);
 
 router
   .route('/gift')
-  .post(gift.createGift);
+  .post(auth.verifyToken, gift.createGift);
 
 router
   .route('/gift/:id')
-  .get(gift.getGiftDetail);
+  .get(auth.verifyToken, gift.getGiftDetail);
 
 router
   .route('/gift/:id')
-  .put(gift.updateGift);
+  .put(auth.verifyToken, gift.updateGift);
 
 router
   .route('/gift/:id')
-  .delete(gift.removeGift);
+  .delete(auth.verifyToken, gift.removeGift);
 
 router
   .route('/transactions')
-  .get(transaction.getTransactionList);
+  .get(auth.verifyToken, transaction.getTransactionList);
 
 router
   .route('/transaction/:id')
-  .delete(transaction.removeTransaction);
-
-// router
-//   .route('/settings')
-//   .put(settings.resetPoints);
+  .delete(auth.verifyToken, transaction.removeTransaction);
 
 module.exports = router;
