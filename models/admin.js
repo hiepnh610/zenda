@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 
 module.exports = (sequelize, DataTypes) => {
   const Admin = sequelize.define('Admin', {
-    user_name: DataTypes.STRING,
+    username: DataTypes.STRING,
     password: DataTypes.STRING
   }, {
     instanceMethods: {
@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       }
     }
   });
+
   Admin.associate = function(models) {
     // associations can be defined here
   };

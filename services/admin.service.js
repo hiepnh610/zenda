@@ -22,12 +22,19 @@ const login = async (payload) => {
 
   const token = auth.signToken({
     id: adminInfo.id,
-    username: adminInfo.user_name
+    username: adminInfo.username
   });
 
   return token;
 };
 
+const getAdminInfo = async (payload) => {
+  const adminInfo = await adminRepository.getAdminInfo(payload);
+  const { username } = adminInfo;
+  return { username };
+};
+
 module.exports = {
-  login
+  login,
+  getAdminInfo
 };

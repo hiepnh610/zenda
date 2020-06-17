@@ -1,8 +1,10 @@
 const adminService = require('../services/admin.service');
 
 const login = async (req, res) => {
-  const username = req.body.user_name;
-  const password = req.body.password;
+  const {
+    username,
+    password
+  } = req.body;
 
   if (!username) {
     res.status(400).json({ message: 'Username cannot be blank.' });
@@ -16,12 +18,7 @@ const login = async (req, res) => {
     return;
   }
 
-  const payload = {
-    user_name: username,
-    password
-  };
-
-  const userInfo = await adminService.login(payload);
+  const userInfo = await adminService.login({ username, password });
 
   if (!userInfo) {
     res.status(400).json({ message: 'Error happened.' });
@@ -38,6 +35,35 @@ const login = async (req, res) => {
   res.status(200).json(userInfo);
 };
 
+const getAdminInfo = async (req, res) => {
+  const { username } = req;
+
+  if (!username) {
+    res.status(400).json({ message: 'Cannot get username.' });
+
+    return;
+  }
+
+  const userInfo = await adminService.getAdminInfo({ username });
+
+  if (!userInfo) {
+    res.status(400).json({ message: 'Error happened.' });
+
+    return;
+  }
+
+  if (userInfo && userInfo.error) {
+    res.status(400).json({ message: userInfo.error });
+
+    return;
+  }
+
+  console.log('userInfo', userInfo);
+
+  res.status(200).json(userInfo);
+};
+
 module.exports = {
-  login
+  login,
+  getAdminInfo
 };

@@ -17,6 +17,10 @@ router
   .post(admin.login);
 
 router
+  .route('/admin')
+  .get(auth.verifyToken, admin.getAdminInfo);
+
+router
   .route('/users')
   .get(auth.verifyToken, user.getUserList);
 
