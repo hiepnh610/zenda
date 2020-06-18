@@ -69,22 +69,32 @@ const updateGift = async (req, res) => {
 
   if (!id) {
     res.status(400).json({ message: 'Cannot get gift information.' });
+
+    return;
   }
 
   if (!name) {
     res.status(400).json({ message: 'Cannot get name gift.' });
+
+    return;
   }
 
   if (!image) {
     res.status(400).json({ message: 'Cannot get image gift.' });
+
+    return;
   }
 
   if (!quantity) {
     res.status(400).json({ message: 'Cannot get quantity gift.' });
+
+    return;
   }
 
   if (!points) {
     res.status(400).json({ message: 'Cannot get points gift.' });
+
+    return;
   }
 
   const payload = {
@@ -99,6 +109,8 @@ const updateGift = async (req, res) => {
 
   if (gift && gift.error) {
     res.status(400).json({ message: gift.error });
+
+    return;
   }
 
   res.status(200).json(gift);
@@ -109,12 +121,16 @@ const getGiftDetail = async (req, res) => {
 
   if (!id) {
     res.status(400).json({ message: 'Cannot get gift information.' });
+
+    return;
   }
 
   const gift = await giftService.getGiftDetail(id);
 
   if (gift && gift.error) {
     res.status(400).json({ message: gift.error });
+
+    return;
   }
 
   res.status(200).json(gift);
