@@ -1,4 +1,4 @@
-const exchangeService = require('../services/exchange.service.js');
+const giftExchangeService = require('../services/gift-exchange.service.js');
 
 const giftExchange = async (req, res) => {
   const {
@@ -16,7 +16,7 @@ const giftExchange = async (req, res) => {
     user_id,
     gift_id
   };
-  const exchange = await exchangeService.giftExchange(payload);
+  const exchange = await giftExchangeService.giftExchange(payload);
 
   if (exchange && exchange.error) {
     res.status(400).end();
@@ -25,8 +25,8 @@ const giftExchange = async (req, res) => {
   }
 };
 
-const exchangeList = async (req, res) => {
-  const exchangeList = await exchangeService.exchangeList();
+const giftExchangeList = async (req, res) => {
+  const exchangeList = await giftExchangeService.giftExchangeList();
 
   if (exchangeList && exchangeList.error) {
     res.status(400).json(exchangeList.error);
@@ -37,7 +37,7 @@ const exchangeList = async (req, res) => {
   res.status(200).json(exchangeList);
 };
 
-const exchangeStatus = async (req, res) => {
+const giftExchangeStatus = async (req, res) => {
   const { gift_id } = req.params;
   const {
     user_id,
@@ -67,6 +67,6 @@ const exchangeStatus = async (req, res) => {
 
 module.exports = {
   giftExchange,
-  exchangeList,
-  exchangeStatus
+  giftExchangeList,
+  giftExchangeStatus
 };

@@ -43,7 +43,7 @@ const giftExchange = async (payload) => {
   }
 };
 
-const exchangeList = async () => {
+const giftExchangeList = async () => {
   try {
     return await Exchange.findAll();
   } catch (error) {
@@ -51,7 +51,7 @@ const exchangeList = async () => {
   }
 };
 
-const exchangeStatus = async (payload) => {
+const giftExchangeStatus = async (payload) => {
   try {
     const {
       id,
@@ -69,6 +69,6 @@ const exchangeStatus = async (payload) => {
 
 module.exports = {
   giftExchange,
-  exchangeList,
-  exchangeStatus
+  giftExchangeList,
+  giftExchangeStatus
 };

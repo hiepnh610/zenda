@@ -6,7 +6,7 @@ const user = require('../controllers/user.controller');
 const gift = require('../controllers/gift.controller');
 const transaction = require('../controllers/transaction.controller');
 const admin = require('../controllers/admin.controller');
-const exchange = require('../controllers/exchange.controllter');
+const exchange = require('../controllers/gift-exchange.controller');
 const auth = require('../auth');
 
 router
@@ -54,11 +54,11 @@ router
   .delete(auth.verifyToken, transaction.removeTransaction);
 
 router
-  .route('/exchange')
-  .get(auth.verifyToken, exchange.exchangeList);
+  .route('/gift-exchange')
+  .get(auth.verifyToken, exchange.giftExchangeList);
 
 router
-  .route('/exchange/:id')
-  .put(auth.verifyToken, exchange.exchangeStatus);
+  .route('/gift-exchange/:id')
+  .put(auth.verifyToken, exchange.giftExchangeStatus);
 
 module.exports = router;
