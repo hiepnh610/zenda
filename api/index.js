@@ -6,6 +6,7 @@ const user = require('../controllers/user.controller');
 const gift = require('../controllers/gift.controller');
 const transaction = require('../controllers/transaction.controller');
 const admin = require('../controllers/admin.controller');
+const exchange = require('../controllers/exchange.controllter');
 const auth = require('../auth');
 
 router
@@ -51,5 +52,13 @@ router
 router
   .route('/transaction/:id')
   .delete(auth.verifyToken, transaction.removeTransaction);
+
+router
+  .route('/exchange')
+  .get(auth.verifyToken, exchange.exchangeList);
+
+router
+  .route('/exchange/:id')
+  .put(auth.verifyToken, exchange.exchangeStatus);
 
 module.exports = router;

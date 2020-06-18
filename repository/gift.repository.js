@@ -26,11 +26,10 @@ const updateGift = async (payload) => {
       quantity,
       points
     } = payload;
-    const giftId = { id };
 
     await Gift.update(
       { name, image, quantity, points },
-      { where: giftId }
+      { where: { id } }
     );
 
     return { message: 'Update successfully.' };

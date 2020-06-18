@@ -22,12 +22,20 @@ const giftExchange = async (payload) => {
       );
 
       await getUserInfo.update(
-        { receive_bag: getUserInfo.receive_bag - getTransactionInfo.amount },
+        { receive_bag: getUserInfo.receive_bag - getGiftInfo.points },
+        { transaction }
+      );
+
+      await Exchange.create(
+        {
+          display_name: getUserInfo.display_name,
+          gift_name: getGiftInfo.name
+        },
         { transaction }
       );
 
       return {
-        message: 'Delete successfully.'
+        message: 'Create successfully.'
       };
     });
   } catch (error) {
@@ -35,6 +43,32 @@ const giftExchange = async (payload) => {
   }
 };
 
+const exchangeList = async () => {
+  try {
+    return await Exchange.findAll();
+  } catch (error) {
+    return { error };
+  }
+};
+
+const exchangeStatus = async (payload) => {
+  try {
+    const {
+      id,
+      status
+    } = payload;
+
+    return await Exchange.update(
+      { status },
+      { where: { id } }
+    );
+  } catch (error) {
+    return { error };
+  };
+};
+
 module.exports = {
-  giftExchange
+  giftExchange,
+  exchangeList,
+  exchangeStatus
 };
