@@ -1,7 +1,7 @@
 const giftExchangeRepository = require('../repository/gift-exchange.repository.js');
 
 const giftExchange = async (payload) => {
-  return await giftExchangeRepository.giftExchange(payload);
+  // return await giftExchangeRepository.giftExchange(payload);
 };
 
 const giftExchangeList = async () => {

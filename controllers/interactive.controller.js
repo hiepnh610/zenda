@@ -2,13 +2,16 @@ const { WebClient } = require('@slack/web-api');
 
 const CONSTANTS  = require('../constants');
 const userService = require('../services/user.service');
+const giftService = require('../services/gift.service');
+const giftExchangeService = require('../services/gift-exchange.service');
 
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
 const {
   giftClaimTemplate,
   giveTemplate,
-  checkBagTemplate
+  checkBagTemplate,
+  giftExchangeTemplate
 } = require('../templates');
 
 const showModal = async (req, res) => {
@@ -64,6 +67,26 @@ const showModal = async (req, res) => {
 
       web.views.open(modal);
     }
+
+    if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIFT_EXCHANGE) {
+      const gifts = await giftService.getGiftsList();
+
+      const radioOptions = gifts.map((gift) => {
+        const text = `*${gift.name}*\n_số lượng còn lại: ${gift.quantity}_\n_Số bimbim cần đổi: ${gift.points}_`;
+
+        return {
+          value: gift.id.toString(),
+          text: {
+            type: 'mrkdwn',
+            text
+          }
+        }
+      });
+
+      modal.view = giftExchangeTemplate(radioOptions);
+
+      web.views.open(modal);
+    }
   }
 
   res.status(200).end();
@@ -97,6 +120,12 @@ const handleDataSubmit = async (req, res) => {
 
     if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_CLAIM) {
       userService.giftClaim(payload);
+    }
+
+    if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_EXCHANGE) {
+      const selectedOptions = payload.actions;
+      console.log('selectedOptions', selectedOptions);
+      giftExchangeService.giftExchange(payload);
     }
   }
 };
