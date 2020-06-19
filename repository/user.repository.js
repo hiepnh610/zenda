@@ -84,8 +84,19 @@ const getUserList = async () => {
   }
 };
 
+const getUserInfo = async (user_id) => {
+  try {
+    return await User.findOne({
+      where: { user_id }
+    });
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   findOrCreate,
   updateUserBag,
-  getUserList
+  getUserList,
+  getUserInfo
 };

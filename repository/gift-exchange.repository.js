@@ -26,17 +26,19 @@ const giftExchange = async (payload) => {
         { transaction }
       );
 
-      await Exchange.create(
-        {
-          display_name: getUserInfo.display_name,
-          gift_name: getGiftInfo.name
-        },
+      await getGiftInfo.update(
+        { quantity: getGiftInfo.quantity - 1 },
         { transaction }
       );
 
-      return {
-        message: 'Create successfully.'
-      };
+      return await Exchange.create(
+        {
+          display_name: getUserInfo.display_name,
+          gift_name: getGiftInfo.name,
+          status: false
+        },
+        { transaction }
+      );
     });
   } catch (error) {
     return { error };

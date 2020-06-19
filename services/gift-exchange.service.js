@@ -1,18 +1,64 @@
-const UTILS = require('../utils');
+const { WebClient } = require('@slack/web-api');
 
+const userRepository = require('../repository/user.repository');
+const giftRepository = require('../repository/gift.repository');
 const giftExchangeRepository = require('../repository/gift-exchange.repository.js');
 
+const UTILS = require('../utils');
+const CONSTANTS = require('../constants');
+
+const { generalTemplate } = require('../templates');
+
+const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
+
 const giftExchange = async (payload) => {
+  const modal = {
+    "trigger_id": payload.trigger_id
+  };
   const slackView = payload.view;
   const valuesRequest = slackView.state.values;
   const selectedOption = UTILS.findValue(valuesRequest, 'gift_exchange');
 
-  if (selectedOption) {
-    const selectedValue = selectedOption.selected_option.value;
-
-    console.log('selectedValue', selectedValue);
+  if (!selectedOption) {
+    return { error: 'Cannot get gift amount.' }
   }
-  // return await giftExchangeRepository.giftExchange(payload);
+
+  const userId = payload.user.id;
+  const selectedValue = selectedOption.selected_option.value;
+  const userInfo = await userRepository.getUserInfo(userId);
+  const giftInfo = await giftRepository.getGiftDetail(selectedValue);
+
+  if (!userInfo) {
+    return { message: 'Cannot get user information.' };
+  }
+
+  if (!giftInfo) {
+    return { message: 'Cannot get gift information.' };
+  }
+
+  const receivePoints = userInfo.receive_bag;
+  const giftPoints = giftInfo.points;
+
+  if (receivePoints < giftPoints) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_EXCHANGE_GIFT);
+
+    web.views.open(modal);
+
+    return;
+  }
+
+  const data = {
+    user_id: userId,
+    gift_id: selectedValue
+  };
+
+  const giftExchangeData = await giftExchangeRepository.giftExchange(data);
+
+  if (giftExchangeData && !giftExchangeData.error) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.GIFT_EXCHANGE_SUCCESSFULLY);
+
+    web.views.open(modal);
+  }
 };
 
 const giftExchangeList = async () => {
