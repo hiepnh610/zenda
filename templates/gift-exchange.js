@@ -20,15 +20,18 @@ const giftExchangeTemplate = (options) => {
     },
     blocks: [
       {
-        type: 'actions',
-        elements: [
-          {
-            type: 'radio_buttons',
-            options
-          }
-        ]
-      }
-    ]
+        type: 'input',
+        element: {
+          type: 'radio_buttons',
+          action_id: 'gift_exchange',
+          options
+        },
+        label: {
+          type: 'plain_text',
+          text: 'Danh sách quà tặng.',
+        },
+      },
+    ],
   };
 };
 

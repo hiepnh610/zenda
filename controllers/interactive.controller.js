@@ -123,8 +123,6 @@ const handleDataSubmit = async (req, res) => {
     }
 
     if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_EXCHANGE) {
-      const selectedOptions = payload.actions;
-      console.log('selectedOptions', selectedOptions);
       giftExchangeService.giftExchange(payload);
     }
   }
