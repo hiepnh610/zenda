@@ -38,31 +38,32 @@ const giftExchangeList = async (req, res) => {
 };
 
 const giftExchangeStatus = async (req, res) => {
-  const { gift_id } = req.params;
-  const {
-    user_id,
-    status
-  } = req.body;
+  const { id } = req.params;
+  const { status } = req.body;
 
-  if (!gift_id) {
-    res.status(400).json({ message: 'Cannot get gift information.' });
+  if (!id) {
+    res.status(400).json({ message: 'Cannot get gift id.' });
 
     return;
   }
 
-  if (!user_id) {
-    res.status(400).json({ message: 'Cannot get user information.' });
-
-    return;
-  }
-
-  if (!status) {
+  if (status === null || status === undefined) {
     res.status(400).json({ message: 'Cannot get status.' });
 
     return;
   }
 
-  res.status(200).json({ message: 'Update Successfully.' });
+  const payload = { id, status };
+
+  const giftExchangeUpdated = await giftExchangeService.giftExchangeStatus(payload);
+
+  if (giftExchangeUpdated && giftExchangeUpdated.error) {
+    res.status(400).json(giftExchangeUpdated.error);
+
+    return;
+  }
+
+  res.status(200).json(giftExchangeUpdated);
 };
 
 module.exports = {
