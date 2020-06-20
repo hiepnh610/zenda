@@ -69,8 +69,13 @@ const giftExchangeStatus = async (payload) => {
   return await giftExchangeRepository.giftExchangeStatus(payload);
 };
 
+const removeGiftExchange = async (id) => {
+  return await giftExchangeRepository.removeGiftExchange(id);
+};
+
 module.exports = {
   giftExchange,
   giftExchangeList,
-  giftExchangeStatus
+  giftExchangeStatus,
+  removeGiftExchange
 };

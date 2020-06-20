@@ -66,8 +66,21 @@ const giftExchangeStatus = async (req, res) => {
   res.status(200).json(giftExchangeUpdated);
 };
 
+const removeGiftExchange = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    res.status(400).json({ message: 'Cannot get gift exchange id.' });
+  }
+
+  const giftExchange = await giftExchangeService.removeGiftExchange(id);
+
+  res.status(200).json(giftExchange);
+};
+
 module.exports = {
   giftExchange,
   giftExchangeList,
-  giftExchangeStatus
+  giftExchangeStatus,
+  removeGiftExchange
 };
