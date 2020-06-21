@@ -5,11 +5,14 @@ const http = require('http').Server(app);
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const RateLimit = require('express-rate-limit');
+const cron = require("node-cron");
 
 const db = require('./models');
 
 const route = require('./api');
 const CONSTANTS = require('./constants');
+
+const userController = require('./controllers/user.controller');
 
 const limiter = new RateLimit({
   windowMs: 1000,
@@ -25,6 +28,10 @@ app.use(limiter);
 db.sequelize.sync();
 
 app.use('/api', route);
+
+cron.schedule('* * * * *', function () {
+  userController.updateAllUser();
+});
 
 http.listen(CONSTANTS.PORT, () => {
   console.log(`This app listen on port ${CONSTANTS.PORT}`);

@@ -192,9 +192,14 @@ const getUserList = async () => {
   return users;
 };
 
+const updateAllUser = async () => {
+  return await userRepository.updateAllUser();
+};
+
 module.exports = {
   findOrCreate,
   updateUserBag,
   giftClaim,
-  getUserList
+  getUserList,
+  updateAllUser
 };

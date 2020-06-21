@@ -94,9 +94,23 @@ const getUserInfo = async (user_id) => {
   }
 };
 
+const updateAllUser = async () => {
+  try {
+    const userList = await User.findAll().map(user => user.id);
+
+    return await User.update(
+      { give_bag: 10 },
+      { where: { id: userList } }
+    );
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   findOrCreate,
   updateUserBag,
   getUserList,
-  getUserInfo
+  getUserInfo,
+  updateAllUser
 };

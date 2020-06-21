@@ -18,6 +18,11 @@ const getUserList = async (req, res) => {
   res.status(200).json(users);
 };
 
+const updateAllUser = async (req, res) => {
+  return await userService.updateAllUser();
+};
+
 module.exports = {
-  getUserList
+  getUserList,
+  updateAllUser
 };
