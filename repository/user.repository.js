@@ -1,3 +1,5 @@
+const escapeHtml = require('escape-html');
+
 const DB = require("../models");
 const User = DB.User;
 const Transaction = DB.Transaction;

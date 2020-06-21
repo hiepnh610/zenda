@@ -16,7 +16,7 @@ const userController = require('./controllers/user.controller');
 
 const limiter = new RateLimit({
   windowMs: 1000,
-  max: 1
+  max: 5
 });
 
 app.use(cors());

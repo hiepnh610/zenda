@@ -112,7 +112,7 @@ const handleDataSubmit = async (req, res) => {
       const giftTransaction = await userService.updateUserBag(payload);
 
       if (giftTransaction && giftTransaction.error) {
-        res.status(400).send({ message: giftTransaction.error });
+        res.status(400).end();
 
         return;
       }
