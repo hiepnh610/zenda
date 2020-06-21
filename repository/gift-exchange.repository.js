@@ -69,8 +69,23 @@ const giftExchangeStatus = async (payload) => {
   };
 };
 
+const removeGiftExchange = async (id) => {
+  try {
+    await Exchange.destroy({
+      where: { id }
+    });
+
+    return {
+      message: 'Delete successfully.'
+    };
+  } catch (error) {
+    return { error };
+  };
+};
+
 module.exports = {
   giftExchange,
   giftExchangeList,
-  giftExchangeStatus
+  giftExchangeStatus,
+  removeGiftExchange
 };

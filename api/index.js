@@ -61,4 +61,8 @@ router
   .route('/gift-exchange/:id')
   .put(auth.verifyToken, exchange.giftExchangeStatus);
 
+router
+  .route('/gift-exchange/:id')
+  .delete(auth.verifyToken, exchange.removeGiftExchange);
+
 module.exports = router;
