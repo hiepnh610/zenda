@@ -1,4 +1,5 @@
 const { WebClient } = require('@slack/web-api');
+const escapeHtml = require('escape-html');
 
 const CONSTANTS = require('../constants');
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
@@ -121,7 +122,7 @@ const giveTheGift = async (payload) => {
     userIdRequest,
     userIdReceive,
     amount: pointsAmount,
-    message: userMessage
+    message: escapeHtml(userMessage)
   };
 };
 
@@ -154,6 +155,9 @@ const updateUserBag = async (payload) => {
 };
 
 const giftClaim = (payload) => {
+  const modal = {
+    "trigger_id": payload.trigger_id
+  };
   const slackView = payload.view;
   const userRequest = payload.user;
   const userIdRequest = userRequest.id;
@@ -162,6 +166,16 @@ const giftClaim = (payload) => {
   const pointsAmount = parseInt(UTILS.findValue(valuesRequest, 'amount').value);
   const userMessage = UTILS.findValue(valuesRequest, 'message').value;
   const message = `<@${userIdRequest}> đã đòi <@${userIdReceive}> *${pointsAmount}* bimbim. Với lời nhắn: \n>${userMessage}`;
+
+  const amountIsInteger = Number.isInteger(pointsAmount);
+
+  if (!amountIsInteger) {
+    modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
+
+    web.views.open(modal);
+
+    return;
+  }
 
   const dataToSendMessage = {
     user_request_id: userIdRequest,

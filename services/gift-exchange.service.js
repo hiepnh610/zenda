@@ -4,6 +4,7 @@ const userRepository = require('../repository/user.repository');
 const giftRepository = require('../repository/gift.repository');
 const giftExchangeRepository = require('../repository/gift-exchange.repository.js');
 
+const slackUtil = require('../slack-utils');
 const UTILS = require('../utils');
 const CONSTANTS = require('../constants');
 
@@ -56,8 +57,14 @@ const giftExchange = async (payload) => {
 
   if (giftExchangeData && !giftExchangeData.error) {
     modal.view = generalTemplate(CONSTANTS.MESSAGES.GIFT_EXCHANGE_SUCCESSFULLY);
+    const dataToSendMessage = {
+      user_request_id: userId,
+      message: `<@${userId}> đã gửi yêu cầu đổi quà.`
+    };
 
     web.views.open(modal);
+
+    slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
   }
 };
 

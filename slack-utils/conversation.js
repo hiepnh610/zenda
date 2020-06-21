@@ -66,12 +66,14 @@ const sendMessageToChannel = async (dataToSendMessage) => {
     const isMessageSendSuccess = await web.chat.postMessage(params);
 
     if (isMessageSendSuccess.ok) {
-      const listUserToCheck = [
-        user_request_id,
-        user_receive_id
-      ];
+      if (user_request_id && user_receive_id) {
+        const listUserToCheck = [
+          user_request_id,
+          user_receive_id
+        ];
 
-      checkUserInChannel(channelId, listUserToCheck);
+        checkUserInChannel(channelId, listUserToCheck);
+      }
     }
   }
 };

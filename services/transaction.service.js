@@ -1,3 +1,5 @@
+const escapeHtml = require('escape-html');
+
 const transactionRepository = require('../repository/transaction.repository');
 const userRepository = require('../repository/user.repository');
 
@@ -10,7 +12,7 @@ const getTransactionList = async () => {
       id: transaction.id,
       amount: transaction.amount,
       createdAt: transaction.createdAt,
-      message: transaction.message
+      message: escapeHtml(transaction.message)
     };
 
     users.forEach((user) => {
