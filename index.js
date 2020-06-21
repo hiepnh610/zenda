@@ -5,7 +5,7 @@ const http = require('http').Server(app);
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const RateLimit = require('express-rate-limit');
-const cron = require("node-cron");
+const cron = require('node-cron');
 
 const db = require('./models');
 
@@ -29,8 +29,11 @@ db.sequelize.sync();
 
 app.use('/api', route);
 
-cron.schedule('* * * * *', function () {
+cron.schedule('* * 1 * *', () => {
   userController.updateAllUser();
+}, {
+  scheduled: true,
+  timezone: 'Asia/Bangkok'
 });
 
 http.listen(CONSTANTS.PORT, () => {

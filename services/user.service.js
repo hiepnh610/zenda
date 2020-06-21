@@ -193,7 +193,14 @@ const getUserList = async () => {
 };
 
 const updateAllUser = async () => {
-  return await userRepository.updateAllUser();
+  const updateUsers = await userRepository.updateAllUser();
+
+  if (updateUsers && !updateUsers.error) {
+    const payload = {
+      message: `<!channel> Số lượng bimbim trong túi cho đã được reset.`
+    };
+    slackUtil.conversation.sendMessageToChannel(payload);
+  }
 };
 
 module.exports = {

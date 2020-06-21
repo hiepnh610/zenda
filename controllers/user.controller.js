@@ -18,7 +18,7 @@ const getUserList = async (req, res) => {
   res.status(200).json(users);
 };
 
-const updateAllUser = async (req, res) => {
+const updateAllUser = async () => {
   return await userService.updateAllUser();
 };
 
