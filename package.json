@@ -33,7 +33,7 @@
     "sequelize": "^5.21.11"
   },
   "engines": {
-    "node": "14.2.0",
+    "node": "14.4.0",
     "npm": "6.14.5"
   },
   "devDependencies": {
