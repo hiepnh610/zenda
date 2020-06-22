@@ -19,7 +19,7 @@ module.exports = {
     "username": process.env.DATABASE_USERNAME,
     "password": process.env.DATABASE_PASSWORD,
     "database": process.env.DATABASE_NAME,
-    "host": process.env.CLEARDB_DATABASE_URL,
+    "host": process.env.DATABASE_HOST,
     "dialect": "mysql"
   }
 }
