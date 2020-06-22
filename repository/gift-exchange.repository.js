@@ -21,24 +21,26 @@ const giftExchange = async (payload) => {
         { transaction }
       );
 
-      await getUserInfo.update(
-        { receive_bag: getUserInfo.receive_bag - getGiftInfo.points },
-        { transaction }
-      );
+      if (getUserInfo.receive_bag > 0) {
+        await getUserInfo.update(
+          { receive_bag: getUserInfo.receive_bag - getGiftInfo.points },
+          { transaction }
+        );
 
-      await getGiftInfo.update(
-        { quantity: getGiftInfo.quantity - 1 },
-        { transaction }
-      );
+        await getGiftInfo.update(
+          { quantity: getGiftInfo.quantity - 1 },
+          { transaction }
+        );
 
-      return await Exchange.create(
-        {
-          display_name: getUserInfo.display_name,
-          gift_name: getGiftInfo.name,
-          status: false
-        },
-        { transaction }
-      );
+        return await Exchange.create(
+          {
+            display_name: getUserInfo.display_name,
+            gift_name: getGiftInfo.name,
+            status: false
+          },
+          { transaction }
+        );
+      }
     });
   } catch (error) {
     return { error };
