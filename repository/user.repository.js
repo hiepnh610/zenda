@@ -78,9 +78,7 @@ const updateUserBag = async (giveData) => {
 
 const getUserList = async () => {
   try {
-    const users = await User.findAll();
-
-    return users;
+    return await User.findAll({ order: [['updatedAt', 'DESC']] });
   } catch (error) {
     return { error };
   }
@@ -98,7 +96,9 @@ const getUserInfo = async (user_id) => {
 
 const updateAllUser = async () => {
   try {
-    const userList = await User.findAll().map(user => user.id);
+    const userList = await User
+    .findAll()
+    .map(user => user.id);
 
     return await User.update(
       { give_bag: 10 },

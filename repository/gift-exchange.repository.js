@@ -49,7 +49,7 @@ const giftExchange = async (payload) => {
 
 const giftExchangeList = async () => {
   try {
-    return await Exchange.findAll();
+    return await Exchange.findAll({ order: [['updatedAt', 'DESC']] });
   } catch (error) {
     return { error };
   }

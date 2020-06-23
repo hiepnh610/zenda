@@ -4,7 +4,9 @@ const Transaction = DB.Transaction;
 
 const getTransactionList = async () => {
   try {
-    const transactions = await Transaction.findAll();
+    const transactions = await Transaction.findAll({
+      order: [['updatedAt', 'DESC']]
+    });
 
     return transactions;
   } catch (error) {
