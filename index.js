@@ -29,8 +29,15 @@ db.sequelize.sync();
 
 app.use('/api', route);
 
-cron.schedule('* * 1 * *', () => {
-  userController.updateAllUser();
+cron.schedule('0 0 1 * *', () => {
+  userController.updatePointsAllUser();
+}, {
+  scheduled: true,
+  timezone: 'Asia/Bangkok'
+});
+
+cron.schedule('0 0 * * *', () => {
+  userController.updatePointsAllUser();
 }, {
   scheduled: true,
   timezone: 'Asia/Bangkok'

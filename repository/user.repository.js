@@ -94,7 +94,7 @@ const getUserInfo = async (user_id) => {
   }
 };
 
-const updateAllUser = async () => {
+const updatePointsAllUser = async () => {
   try {
     const userList = await User
     .findAll()
@@ -109,10 +109,34 @@ const updateAllUser = async () => {
   }
 };
 
+const getUserHasNotName = async () => {
+  try {
+    return await User
+    .findAll({ where: { display_name: '' } })
+    .map(user => user.user_id);
+  } catch (error) {
+    return { error };
+  }
+};
+
+const updateUserName = async (userData) => {
+  try {
+    const user = await User.findOne({
+      where: { user_id: userData.id }
+    });
+
+    await user.update({ display_name: userData.profile.display_name });
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   findOrCreate,
   updateUserBag,
   getUserList,
   getUserInfo,
-  updateAllUser
+  updatePointsAllUser,
+  getUserHasNotName,
+  updateUserName
 };

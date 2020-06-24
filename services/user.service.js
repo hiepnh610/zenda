@@ -192,8 +192,8 @@ const getUserList = async () => {
   return users;
 };
 
-const updateAllUser = async () => {
-  const updateUsers = await userRepository.updateAllUser();
+const updatePointsAllUser = async () => {
+  const updateUsers = await userRepository.updatePointsAllUser();
 
   if (updateUsers && !updateUsers.error) {
     const payload = {
@@ -203,10 +203,25 @@ const updateAllUser = async () => {
   }
 };
 
+const updateUserName = async () => {
+  const getUserHasNotName = await userRepository.getUserHasNotName();
+
+  if (getUserHasNotName.length) {
+    getUserHasNotName.forEach(async (user) => {
+      await setTimeout(async () => {
+        const getUserInfo = await slackUtil.user.getUserInfo(user);
+
+        await userRepository.updateUserName(getUserInfo.user);
+      }, 2000);
+    });
+  }
+};
+
 module.exports = {
   findOrCreate,
   updateUserBag,
   giftClaim,
   getUserList,
-  updateAllUser
+  updatePointsAllUser,
+  updateUserName
 };
