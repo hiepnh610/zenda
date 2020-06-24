@@ -11,7 +11,8 @@ const {
   giftClaimTemplate,
   giveTemplate,
   checkBagTemplate,
-  giftExchangeTemplate
+  giftExchangeTemplate,
+  generalTemplate
 } = require('../templates');
 
 const showModal = async (req, res) => {
@@ -95,6 +96,12 @@ const showModal = async (req, res) => {
 
       web.views.open(modal);
     }
+
+    if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.INFORMATION) {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.INFORMATION);
+
+      web.views.open(modal);
+    }
   }
 
   res.status(200).end();
@@ -102,10 +109,7 @@ const showModal = async (req, res) => {
 
 const handleDataSubmit = async (req, res) => {
   if (!req.body.payload) {
-    res.status(400).send({
-      message: "Cannot get user information."
-    });
-
+    res.status(400).end();
     return;
   }
 
