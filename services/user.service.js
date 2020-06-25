@@ -69,7 +69,7 @@ const giveTheGift = async (payload) => {
 
   const amountIsInteger = Number.isInteger(pointsAmount);
 
-  if (!amountIsInteger) {
+  if (!amountIsInteger || pointsAmount < 0) {
     modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
 
     web.views.open(modal);
