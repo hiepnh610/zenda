@@ -138,6 +138,8 @@ const handleDataSubmit = async (req, res) => {
       giftExchangeService.giftExchange(payload);
     }
   }
+
+  res.status(200).end();
 };
 
 const handleInteractiveFromSlack = (req, res) => {
