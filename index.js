@@ -28,6 +28,9 @@ app.use(limiter);
 db.sequelize.sync();
 
 app.use('/api', route);
+app.get('/', (req, res) => {
+  res.send('Hi, I am a bot!');
+});
 
 cron.schedule('0 0 1 * *', () => {
   userController.updatePointsAllUser();
