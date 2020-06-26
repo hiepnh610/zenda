@@ -44,10 +44,7 @@ const showModal = async (req, res) => {
         return;
       }
 
-      modal.view = giveTemplate(
-        getUserRequestInfo.give_bag,
-        getUserRequestInfo.receive_bag
-      );
+      modal.view = giveTemplate(getUserRequestInfo.give_bag);
 
       web.views.open(modal);
     }
@@ -104,7 +101,7 @@ const showModal = async (req, res) => {
     }
   }
 
-  res.status(200).json();
+  res.sendStatus(200);
 };
 
 const handleDataSubmit = async (req, res) => {
@@ -137,8 +134,6 @@ const handleDataSubmit = async (req, res) => {
     if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_EXCHANGE) {
       giftExchangeService.giftExchange(payload);
     }
-
-    res.status(200).json();
   }
 };
 

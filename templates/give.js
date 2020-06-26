@@ -1,6 +1,6 @@
 const { MODAL_CALLBACK_ID } = require('../constants');
 
-const giveTemplate = (giveBag, receiveBag) => {
+const giveTemplate = (giveBag) => {
   return {
     type: 'modal',
     callback_id: MODAL_CALLBACK_ID.GIVE,
@@ -24,13 +24,6 @@ const giveTemplate = (giveBag, receiveBag) => {
         text: {
           type: 'mrkdwn',
           text: `Túi cho: *${giveBag}* bimbim`,
-        },
-      },
-      {
-        type: 'section',
-        text: {
-          type: 'mrkdwn',
-          text: `Túi nhận: *${receiveBag}* bimbim`,
         },
       },
       {
