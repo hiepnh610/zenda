@@ -70,9 +70,11 @@ const giveTheGift = async (payload) => {
   const amountIsInteger = Number.isInteger(pointsAmount);
 
   if (!amountIsInteger || pointsAmount < 0) {
-    modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
 
-    web.views.open(modal);
+      web.views.open(modal);
+    }, 50);
 
     return;
   }
@@ -81,9 +83,11 @@ const giveTheGift = async (payload) => {
   const checkUserRequestBag = checkBag(getUserRequestInfo, pointsAmount);
 
   if (!checkUserRequestBag) {
-    modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
 
-    web.views.open(modal);
+      web.views.open(modal);
+    }, 50);
 
     return;
   }
@@ -91,27 +95,33 @@ const giveTheGift = async (payload) => {
   const userIsValid = await checkUserIsValid(userIdReceive);
 
   if (userIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_DEACTIVATED) {
-    modal.view = generalTemplate(
-      CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER
-    );
+    setTimeout(() => {
+      modal.view = generalTemplate(
+        CONSTANTS.MESSAGES.NOT_GIVE_TO_DEACTIVATE_USER
+      );
 
-    web.views.open(modal);
+      web.views.open(modal);
+    }, 50);
 
     return;
   }
 
   if (userIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_NOT_HUMAN) {
-    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
 
-    web.views.open(modal);
+      web.views.open(modal);
+    }, 50);
 
     return;
   }
 
   if (userIdRequest === userIdReceive) {
-    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
 
-    web.views.open(modal);
+      web.views.open(modal);
+    }, 50);
 
     return;
   }
@@ -170,9 +180,11 @@ const giftClaim = (payload) => {
   const amountIsInteger = Number.isInteger(pointsAmount);
 
   if (!amountIsInteger) {
-    modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
 
-    web.views.open(modal);
+      web.views.open(modal);
+    }, 50);
 
     return;
   }

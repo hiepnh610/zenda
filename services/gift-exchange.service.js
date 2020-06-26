@@ -41,9 +41,11 @@ const giftExchange = async (payload) => {
   const giftPoints = giftInfo.points;
 
   if (receivePoints < giftPoints) {
-    modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_EXCHANGE_GIFT);
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_EXCHANGE_GIFT);
 
-    web.views.open(modal);
+      web.views.open(modal);
+    }, 50);
 
     return;
   }
@@ -56,15 +58,17 @@ const giftExchange = async (payload) => {
   const giftExchangeData = await giftExchangeRepository.giftExchange(data);
 
   if (giftExchangeData && !giftExchangeData.error) {
-    modal.view = generalTemplate(CONSTANTS.MESSAGES.GIFT_EXCHANGE_SUCCESSFULLY);
-    const dataToSendMessage = {
-      user_request_id: userId,
-      message: `<@${userId}> đã gửi yêu cầu đổi quà.`
-    };
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.GIFT_EXCHANGE_SUCCESSFULLY);
+      const dataToSendMessage = {
+        user_request_id: userId,
+        message: `<@${userId}> đã gửi yêu cầu đổi quà.`
+      };
 
-    web.views.open(modal);
+      web.views.open(modal);
 
-    slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
+      slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
+    }, 50);
   }
 };
 

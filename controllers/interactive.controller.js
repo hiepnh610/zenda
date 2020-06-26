@@ -110,8 +110,6 @@ const handleDataSubmit = async (req, res) => {
     return;
   }
 
-  // res.status(200).end();
-
   const payload = JSON.parse(req.body.payload);
 
   const slackView = payload.view;
