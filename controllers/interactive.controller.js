@@ -24,6 +24,8 @@ const showModal = async (req, res) => {
     return;
   }
 
+  res.status(200).end();
+
   const payload = JSON.parse(req.body.payload);
   const callbackId = payload.callback_id;
   const activityType = payload.type;
@@ -69,13 +71,13 @@ const showModal = async (req, res) => {
     if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIFT_EXCHANGE) {
       const gifts = await giftService.getGiftsList();
 
-      if (!gifts.length) {
+      if (!gifts.rows.length) {
         res.status(400).end();
 
         return;
       }
 
-      const filterGift = gifts.filter(gift => gift.quantity > 0);
+      const filterGift = gifts.rows.filter(gift => gift.quantity > 0);
 
       const radioOptions = filterGift.map((gift) => {
         const text = `*${gift.name}*\n_số lượng còn lại: ${gift.quantity}_\n_Số bimbim cần đổi: ${gift.points}_`;
@@ -100,8 +102,6 @@ const showModal = async (req, res) => {
       web.views.open(modal);
     }
   }
-
-  res.sendStatus(200);
 };
 
 const handleDataSubmit = async (req, res) => {
@@ -109,6 +109,8 @@ const handleDataSubmit = async (req, res) => {
     res.status(400).end();
     return;
   }
+
+  // res.status(200).end();
 
   const payload = JSON.parse(req.body.payload);
 
