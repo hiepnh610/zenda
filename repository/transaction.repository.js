@@ -4,7 +4,9 @@ const Transaction = DB.Transaction;
 
 const getTransactionList = async () => {
   try {
-    const transactions = await Transaction.findAll({
+    const transactions = await Transaction.findAndCountAll({
+      limit: 5,
+      offset: 0,
       order: [['updatedAt', 'DESC']]
     });
 

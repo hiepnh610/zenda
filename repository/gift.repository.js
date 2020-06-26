@@ -3,7 +3,11 @@ const Gift = DB.Gift;
 
 const getGiftsList = async () => {
   try {
-    return await Gift.findAll({ order: [['updatedAt', 'DESC']] });
+    return await Gift.findAndCountAll({
+      limit: 5,
+      offset: 0,
+      order: [['updatedAt', 'DESC']]
+    });
   } catch (error) {
     return { error };
   };

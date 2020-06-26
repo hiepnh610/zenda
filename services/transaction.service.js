@@ -7,7 +7,7 @@ const getTransactionList = async () => {
   const transactions = await transactionRepository.getTransactionList();
   const users = await userRepository.getUserList();
 
-  return transactions.map((transaction) => {
+  const newRows = transactions.rows.map((transaction) => {
     let userData = {
       id: transaction.id,
       amount: transaction.amount,
@@ -15,7 +15,7 @@ const getTransactionList = async () => {
       message: escapeHtml(transaction.message)
     };
 
-    users.forEach((user) => {
+    users.rows.forEach((user) => {
       if (user.user_id === transaction.user_request_id) {
         userData.user_request = user.display_name;
       }
@@ -27,6 +27,13 @@ const getTransactionList = async () => {
 
     return userData;
   });
+
+  const response = {
+    count: transactions.count,
+    rows: newRows
+  };
+
+  return response;
 };
 
 const removeTransaction = async (transactionId) => {

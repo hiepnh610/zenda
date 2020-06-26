@@ -78,7 +78,11 @@ const updateUserBag = async (giveData) => {
 
 const getUserList = async () => {
   try {
-    return await User.findAll({ order: [['updatedAt', 'DESC']] });
+    return await User.findAndCountAll({
+      limit: 5,
+      offset: 0,
+      order: [['updatedAt', 'DESC']]
+    });
   } catch (error) {
     return { error };
   }
