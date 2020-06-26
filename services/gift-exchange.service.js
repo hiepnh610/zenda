@@ -45,7 +45,7 @@ const giftExchange = async (payload) => {
       modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_EXCHANGE_GIFT);
 
       web.views.open(modal);
-    }, 300);
+    }, 1000);
 
     return;
   }
@@ -69,7 +69,7 @@ const giftExchange = async (payload) => {
       slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
 
       web.views.open(modal);
-    }, 300);
+    }, 1000);
   }
 };
 

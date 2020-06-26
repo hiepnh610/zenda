@@ -74,7 +74,7 @@ const giveTheGift = async (payload) => {
       modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
 
       web.views.open(modal);
-    }, 300);
+    }, 1000);
 
     return;
   }
@@ -87,7 +87,7 @@ const giveTheGift = async (payload) => {
       modal.view = generalTemplate(CONSTANTS.MESSAGES.OUT_OF_POINTS);
 
       web.views.open(modal);
-    }, 300);
+    }, 1000);
 
     return;
   }
@@ -101,7 +101,7 @@ const giveTheGift = async (payload) => {
       );
 
       web.views.open(modal);
-    }, 300);
+    }, 1000);
 
     return;
   }
@@ -111,7 +111,7 @@ const giveTheGift = async (payload) => {
       modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_BOT);
 
       web.views.open(modal);
-    }, 300);
+    }, 1000);
 
     return;
   }
@@ -121,7 +121,7 @@ const giveTheGift = async (payload) => {
       modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_GIVE_TO_SELF);
 
       web.views.open(modal);
-    }, 300);
+    }, 1000);
 
     return;
   }
@@ -184,7 +184,7 @@ const giftClaim = (payload) => {
       modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
 
       web.views.open(modal);
-    }, 300);
+    }, 1000);
 
     return;
   }
