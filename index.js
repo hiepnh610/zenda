@@ -40,7 +40,7 @@ cron.schedule('0 0 1 * *', () => {
 });
 
 cron.schedule('0 0 * * *', () => {
-  userController.updatePointsAllUser();
+  userController.updateUserName();
 }, {
   scheduled: true,
   timezone: 'Asia/Bangkok'
