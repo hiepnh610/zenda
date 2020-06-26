@@ -1,13 +1,19 @@
 const DB = require("../models");
 const Gift = DB.Gift;
 
-const getGiftsList = async () => {
+const getGiftsList = async (offset) => {
   try {
-    return await Gift.findAndCountAll({
-      limit: 5,
-      offset: 0,
-      order: [['updatedAt', 'DESC']]
-    });
+    let query = {};
+
+    if (offset) {
+      query = {
+        limit: 5,
+        offset,
+        order: [['updatedAt', 'DESC']]
+      };
+    }
+
+    return await Gift.findAndCountAll(query);
   } catch (error) {
     return { error };
   };
