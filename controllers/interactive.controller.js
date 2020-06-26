@@ -104,7 +104,7 @@ const showModal = async (req, res) => {
     }
   }
 
-  res.status(200).end();
+  res.status(200).json();
 };
 
 const handleDataSubmit = async (req, res) => {
@@ -137,9 +137,9 @@ const handleDataSubmit = async (req, res) => {
     if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_EXCHANGE) {
       giftExchangeService.giftExchange(payload);
     }
-  }
 
-  res.status(200).end();
+    res.status(200).json();
+  }
 };
 
 const handleInteractiveFromSlack = (req, res) => {
