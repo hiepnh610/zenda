@@ -1,6 +1,6 @@
 const { MODAL_CALLBACK_ID } = require('../constants');
 
-const giftExchangeTemplate = (options) => {
+const giftExchangeTemplate = (options, points) => {
   return {
     type: 'modal',
     callback_id: MODAL_CALLBACK_ID.GIFT_EXCHANGE,
@@ -19,6 +19,13 @@ const giftExchangeTemplate = (options) => {
       emoji: true,
     },
     blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: `Số bimbim bạn có thể đổi quà: *${points}* bimbim`,
+        },
+      },
       {
         type: 'input',
         element: {

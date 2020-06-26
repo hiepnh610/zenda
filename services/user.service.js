@@ -164,7 +164,7 @@ const updateUserBag = async (payload) => {
   }
 };
 
-const giftClaim = (payload) => {
+const pointsClaim = (payload) => {
   const modal = {
     "trigger_id": payload.trigger_id
   };
@@ -179,7 +179,7 @@ const giftClaim = (payload) => {
 
   const amountIsInteger = Number.isInteger(pointsAmount);
 
-  if (!amountIsInteger && pointsAmount <= 0) {
+  if (!amountIsInteger || pointsAmount <= 0) {
     setTimeout(() => {
       modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
 
@@ -232,7 +232,7 @@ const updateUserName = async () => {
 module.exports = {
   findOrCreate,
   updateUserBag,
-  giftClaim,
+  pointsClaim,
   getUserList,
   updatePointsAllUser,
   updateUserName

@@ -8,7 +8,7 @@ const giftExchangeService = require('../services/gift-exchange.service');
 const web = new WebClient(CONSTANTS.SLACK_APP_OPTIONS.botToken);
 
 const {
-  giftClaimTemplate,
+  pointsClaimTemplate,
   giveTemplate,
   checkBagTemplate,
   giftExchangeTemplate,
@@ -51,8 +51,8 @@ const showModal = async (req, res) => {
       web.views.open(modal);
     }
 
-    if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIFT_CLAIM) {
-      modal.view = giftClaimTemplate;
+    if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.CLAIM) {
+      modal.view = pointsClaimTemplate;
 
       web.views.open(modal);
     }
@@ -69,9 +69,16 @@ const showModal = async (req, res) => {
     }
 
     if (callbackId === CONSTANTS.SHORT_CUT_CALLBACK_ID.GIFT_EXCHANGE) {
+      const getUserRequestInfo = await userService.findOrCreate(userIdRequest);
       const gifts = await giftService.getGiftsList();
 
       if (!gifts.rows.length) {
+        res.status(400).end();
+
+        return;
+      }
+
+      if (!getUserRequestInfo) {
         res.status(400).end();
 
         return;
@@ -91,7 +98,10 @@ const showModal = async (req, res) => {
         }
       });
 
-      modal.view = giftExchangeTemplate(radioOptions);
+      modal.view = giftExchangeTemplate(
+        radioOptions,
+        getUserRequestInfo.receive_bag
+      );
 
       web.views.open(modal);
     }
@@ -129,8 +139,8 @@ const handleDataSubmit = async (req, res) => {
       }
     }
 
-    if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_CLAIM) {
-      userService.giftClaim(payload);
+    if (cbId === CONSTANTS.MODAL_CALLBACK_ID.CLAIM) {
+      userService.pointsClaim(payload);
     }
 
     if (cbId === CONSTANTS.MODAL_CALLBACK_ID.GIFT_EXCHANGE) {

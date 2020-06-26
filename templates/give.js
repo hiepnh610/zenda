@@ -23,7 +23,7 @@ const giveTemplate = (giveBag) => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `Túi cho: *${giveBag}* bimbim`,
+          text: `Số bimbim bạn có thể tặng: *${giveBag}* bimbim`,
         },
       },
       {

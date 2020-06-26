@@ -1,8 +1,8 @@
 const { MODAL_CALLBACK_ID } = require('../constants');
 
-const giftClaimTemplate = {
+const pointsClaimTemplate = {
   type: 'modal',
-  callback_id: MODAL_CALLBACK_ID.GIFT_CLAIM,
+  callback_id: MODAL_CALLBACK_ID.CLAIM,
   title: {
     type: 'plain_text',
     text: 'Đòi Bimbim'
@@ -73,4 +73,4 @@ const giftClaimTemplate = {
   ]
 };
 
-module.exports = giftClaimTemplate;
+module.exports = pointsClaimTemplate;
