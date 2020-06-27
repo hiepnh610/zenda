@@ -18,7 +18,7 @@ const findOrCreate = async (userId) => {
     give_bag: 10,
     receive_bag: 0,
     user_id: slackUserInfo.id,
-    display_name: slackUserInfo.profile.display_name
+    display_name: slackUserInfo.profile.real_name
   };
 
   const user = await userRepository.findOrCreate(data);

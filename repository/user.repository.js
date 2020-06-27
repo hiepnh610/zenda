@@ -74,13 +74,19 @@ const updateUserBag = async (giveData) => {
   }
 };
 
-const getUserList = async () => {
+const getUserList = async (offset) => {
   try {
-    return await User.findAndCountAll({
-      limit: 5,
-      offset: 0,
-      order: [['updatedAt', 'DESC']]
-    });
+    let query = {};
+
+    if (offset) {
+      query = {
+        limit: 5,
+        offset,
+        order: [['updatedAt', 'DESC']]
+      }
+    }
+
+    return await User.findAndCountAll(query);
   } catch (error) {
     return { error };
   }
@@ -127,7 +133,7 @@ const updateUserName = async (userData) => {
       where: { user_id: userData.id }
     });
 
-    await user.update({ display_name: userData.profile.display_name });
+    await user.update({ display_name: userData.profile.real_name });
   } catch (error) {
     return { error };
   }

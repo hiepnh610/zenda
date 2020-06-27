@@ -42,10 +42,6 @@ router
   .put(auth.verifyToken, gift.updateGift);
 
 router
-  .route('/gift/:id')
-  .delete(auth.verifyToken, gift.removeGift);
-
-router
   .route('/transactions')
   .get(auth.verifyToken, transaction.getTransactionList);
 

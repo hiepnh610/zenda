@@ -48,20 +48,6 @@ const updateGift = async (payload) => {
   };
 };
 
-const removeGift = async (id) => {
-  try {
-    await Gift.destroy({
-      where: { id }
-    });
-
-    return {
-      message: 'Delete successfully.'
-    };
-  } catch (error) {
-    return { error };
-  };
-};
-
 const getGiftDetail = async (id) => {
   try {
     return await Gift.findOne({
@@ -75,7 +61,6 @@ const getGiftDetail = async (id) => {
 module.exports = {
   getGiftsList,
   createGift,
-  removeGift,
   updateGift,
   getGiftDetail
 };

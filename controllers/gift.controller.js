@@ -46,18 +46,6 @@ const createGift = async (req, res) => {
   res.status(201).json(gift);
 };
 
-const removeGift = async (req, res) => {
-  const id = req.params.id;
-
-  if (!id) {
-    res.status(400).json({ message: 'Cannot get gift information.' });
-  }
-
-  const gift = await giftService.removeGift(id);
-
-  res.status(200).json(gift);
-};
-
 const updateGift = async (req, res) => {
   const id = req.params.id;
   const {
@@ -139,7 +127,6 @@ const getGiftDetail = async (req, res) => {
 module.exports = {
   getGiftsList,
   createGift,
-  removeGift,
   updateGift,
   getGiftDetail
 };

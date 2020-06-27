@@ -12,10 +12,6 @@ const updateGift = async (payload) => {
   return await giftRepository.updateGift(payload);
 };
 
-const removeGift = async (id) => {
-  return await giftRepository.removeGift(id);
-};
-
 const getGiftDetail = async (id) => {
   return await giftRepository.getGiftDetail(id);
 };
@@ -23,7 +19,6 @@ const getGiftDetail = async (id) => {
 module.exports = {
   getGiftsList,
   createGift,
-  removeGift,
   updateGift,
   getGiftDetail
 };
