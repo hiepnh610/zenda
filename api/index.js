@@ -7,6 +7,7 @@ const gift = require('../controllers/gift.controller');
 const transaction = require('../controllers/transaction.controller');
 const admin = require('../controllers/admin.controller');
 const exchange = require('../controllers/gift-exchange.controller');
+const chart = require('../controllers/chart.controller');
 const auth = require('../auth');
 
 router
@@ -60,5 +61,9 @@ router
 router
   .route('/gift-exchange/:id')
   .delete(auth.verifyToken, exchange.removeGiftExchange);
+
+router
+  .route('/top-points')
+  .get(auth.verifyToken, chart.getTopUserHasHighestPoints);
 
 module.exports = router;

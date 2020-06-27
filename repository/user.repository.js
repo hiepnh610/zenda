@@ -138,6 +138,17 @@ const updateUserName = async (userData) => {
   }
 };
 
+const getTopUserHasHighestPoints = async () => {
+  try {
+    return await User.findAndCountAll({
+      limit: 10,
+      order: [['receive_bag', 'DESC']]
+    });
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   findOrCreate,
   updateUserBag,
@@ -145,5 +156,6 @@ module.exports = {
   getUserInfo,
   updatePointsAllUser,
   getUserHasNotName,
-  updateUserName
+  updateUserName,
+  getTopUserHasHighestPoints
 };
