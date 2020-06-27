@@ -1,7 +1,9 @@
 const giftService = require('../services/gift.service');
 
 const getGiftsList = async (req, res) => {
-  const gifts = await giftService.getGiftsList();
+  const offset = req.query.offset || '';
+
+  const gifts = await giftService.getGiftsList(offset);
 
   if (!gifts) {
     res.status(400).json({ message: 'Error happened.' });

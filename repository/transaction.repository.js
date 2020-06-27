@@ -2,13 +2,19 @@ const DB = require("../models");
 const User = DB.User;
 const Transaction = DB.Transaction;
 
-const getTransactionList = async () => {
-  try {
-    const transactions = await Transaction.findAndCountAll({
+const getTransactionList = async (offset) => {
+  let query = {};
+
+  if (offset) {
+    query = {
       limit: 5,
-      offset: 0,
+      offset: parseInt(offset),
       order: [['updatedAt', 'DESC']]
-    });
+    };
+  }
+
+  try {
+    const transactions = await Transaction.findAndCountAll(query);
 
     return transactions;
   } catch (error) {

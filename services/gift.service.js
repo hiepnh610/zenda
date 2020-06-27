@@ -1,7 +1,7 @@
 const giftRepository = require('../repository/gift.repository');
 
-const getGiftsList = async () => {
-  return await giftRepository.getGiftsList();
+const getGiftsList = async (offset) => {
+  return await giftRepository.getGiftsList(offset);
 };
 
 const createGift = async (payload) => {

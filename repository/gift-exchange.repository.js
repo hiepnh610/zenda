@@ -47,13 +47,19 @@ const giftExchange = async (payload) => {
   }
 };
 
-const giftExchangeList = async () => {
-  try {
-    return await Exchange.findAndCountAll({
+const giftExchangeList = async (offset) => {
+  let query = {};
+
+  if (offset) {
+    query = {
       limit: 5,
-      offset: 0,
+      offset: parseInt(offset),
       order: [['updatedAt', 'DESC']]
-    });
+    };
+  }
+
+  try {
+    return await Exchange.findAndCountAll(query);
   } catch (error) {
     return { error };
   }

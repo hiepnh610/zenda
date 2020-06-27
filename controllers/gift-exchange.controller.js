@@ -26,7 +26,9 @@ const giftExchange = async (req, res) => {
 };
 
 const giftExchangeList = async (req, res) => {
-  const exchangeList = await giftExchangeService.giftExchangeList();
+  const offset = req.query.offset || '';
+
+  const exchangeList = await giftExchangeService.giftExchangeList(offset);
 
   if (exchangeList && exchangeList.error) {
     res.status(400).json(exchangeList.error);

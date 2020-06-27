@@ -3,8 +3,8 @@ const escapeHtml = require('escape-html');
 const transactionRepository = require('../repository/transaction.repository');
 const userRepository = require('../repository/user.repository');
 
-const getTransactionList = async () => {
-  const transactions = await transactionRepository.getTransactionList();
+const getTransactionList = async (offset) => {
+  const transactions = await transactionRepository.getTransactionList(offset);
   const users = await userRepository.getUserList();
 
   const newRows = transactions.rows.map((transaction) => {

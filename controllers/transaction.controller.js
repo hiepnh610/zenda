@@ -1,7 +1,9 @@
 const transactionService = require('../services/transaction.service');
 
 const getTransactionList = async (req, res) => {
-  const transactions = await transactionService.getTransactionList();
+  const offset = req.query.offset || '';
+
+  const transactions = await transactionService.getTransactionList(offset);
 
   if (transactions && transactions.error) {
     res.status(400).json({ message: transactions.error });

@@ -81,8 +81,7 @@ const getUserList = async (offset) => {
     if (offset) {
       query = {
         limit: 5,
-        offset,
-        order: [['updatedAt', 'DESC']]
+        offset: parseInt(offset)
       }
     }
 

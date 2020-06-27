@@ -198,8 +198,8 @@ const pointsClaim = (payload) => {
   slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
 };
 
-const getUserList = async () => {
-  const users = await userRepository.getUserList();
+const getUserList = async (offset) => {
+  const users = await userRepository.getUserList(offset);
 
   return users;
 };

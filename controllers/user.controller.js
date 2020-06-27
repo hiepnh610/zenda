@@ -1,7 +1,9 @@
 const userService = require('../services/user.service');
 
 const getUserList = async (req, res) => {
-  const users = await userService.getUserList();
+  const offset = req.query.offset || '';
+
+  const users = await userService.getUserList(offset);
 
   if (!users) {
     res.status(400).json({ message: 'Error happened.' });

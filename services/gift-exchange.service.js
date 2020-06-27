@@ -73,8 +73,8 @@ const giftExchange = async (payload) => {
   }
 };
 
-const giftExchangeList = async () => {
-  return await giftExchangeRepository.giftExchangeList();
+const giftExchangeList = async (offset) => {
+  return await giftExchangeRepository.giftExchangeList(offset);
 };
 
 const giftExchangeStatus = async (payload) => {
