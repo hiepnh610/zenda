@@ -119,7 +119,7 @@ const updatePointsAllUser = async () => {
 const getUserHasNotName = async () => {
   try {
     return await User
-    .findAll({ where: { display_name: '' } })
+    .findAll()
     .map(user => user.user_id);
   } catch (error) {
     return { error };
