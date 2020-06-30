@@ -28,8 +28,29 @@ const updateUserName = async () => {
   await userService.updateUserName();
 };
 
+const getUserDetail = async (req, res) => {
+  const id = req.params.id;
+
+  if (!id) {
+    res.status(400).json({ message: 'Cannot get user information.' });
+
+    return;
+  }
+
+  const user = await userService.getUserDetail(id);
+
+  if (user && user.error) {
+    res.status(400).json({ message: user.error });
+
+    return;
+  }
+
+  res.status(200).json(user);
+};
+
 module.exports = {
   getUserList,
   updatePointsAllUser,
-  updateUserName
+  updateUserName,
+  getUserDetail
 };

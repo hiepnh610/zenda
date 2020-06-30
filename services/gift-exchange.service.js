@@ -26,7 +26,7 @@ const giftExchange = async (payload) => {
 
   const userId = payload.user.id;
   const selectedValue = selectedOption.selected_option.value;
-  const userInfo = await userRepository.getUserInfo(userId);
+  const userInfo = await userRepository.getUserInfo({ user_id: userId });
   const giftInfo = await giftRepository.getGiftDetail(selectedValue);
 
   if (!userInfo) {

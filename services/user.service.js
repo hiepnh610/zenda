@@ -229,11 +229,52 @@ const updateUserName = async () => {
   }
 };
 
+const getUserDetail = async (id) => {
+  const userInfo = await userRepository.getUserInfo({ id });
+
+  if (userInfo && userInfo.error) {
+    return { message: userInfo.error };
+  }
+
+  const {
+    give_bag,
+    receive_bag,
+    user_id
+  } = userInfo;
+  const getSlackUserInfo = await slackUtil.user.getUserInfo(user_id);
+
+  if (!getSlackUserInfo) {
+    return { message: 'Cannot get slack user information.' };
+  }
+
+  const {
+    display_name,
+    email,
+    image_192,
+    phone,
+    real_name
+  } = getSlackUserInfo.user.profile;
+
+  const response = {
+    display_name,
+    email,
+    image_192,
+    phone,
+    real_name,
+    give_bag,
+    receive_bag,
+    user_id
+  };
+
+  return response;
+};
+
 module.exports = {
   findOrCreate,
   updateUserBag,
   pointsClaim,
   getUserList,
   updatePointsAllUser,
-  updateUserName
+  updateUserName,
+  getUserDetail
 };

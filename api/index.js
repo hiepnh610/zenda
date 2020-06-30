@@ -27,6 +27,10 @@ router
   .get(auth.verifyToken, user.getUserList);
 
 router
+  .route('/user/:id')
+  .get(auth.verifyToken, user.getUserDetail);
+
+router
   .route('/gifts')
   .get(auth.verifyToken, gift.getGiftsList);
 

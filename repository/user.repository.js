@@ -91,10 +91,10 @@ const getUserList = async (offset) => {
   }
 };
 
-const getUserInfo = async (user_id) => {
+const getUserInfo = async (query) => {
   try {
     return await User.findOne({
-      where: { user_id }
+      where: query
     });
   } catch (error) {
     return { error };
