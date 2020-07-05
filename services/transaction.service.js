@@ -18,10 +18,12 @@ const getTransactionList = async (offset) => {
     users.rows.forEach((user) => {
       if (user.user_id === transaction.user_request_id) {
         userData.user_request = user.display_name;
+        userData.user_request_id = user.id;
       }
 
       if (user.user_id === transaction.user_receive_id) {
         userData.user_receive = user.display_name;
+        userData.user_receive_id = user.id;
       }
     });
 

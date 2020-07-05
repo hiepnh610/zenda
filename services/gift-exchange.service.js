@@ -74,7 +74,44 @@ const giftExchange = async (payload) => {
 };
 
 const giftExchangeList = async (offset) => {
-  return await giftExchangeRepository.giftExchangeList(offset);
+  const exchanges = await giftExchangeRepository.giftExchangeList(offset);
+  const users = await userRepository.getUserList();
+
+  const newRows = exchanges.rows.map((exchange) => {
+    const {
+      id,
+      display_name,
+      gift_name,
+      status,
+      createdAt,
+      updatedAt,
+      user_request_id
+    } = exchange;
+
+    let exchangeData = {
+      id,
+      display_name,
+      gift_name,
+      status,
+      createdAt,
+      updatedAt,
+    };
+
+    users.rows.forEach((user) => {
+      if (user.user_id === user_request_id) {
+        exchangeData.user_request_id = user.id;
+      }
+    });
+
+    return exchangeData;
+  });
+
+  const response = {
+    count: exchanges.count,
+    rows: newRows
+  };
+
+  return response;
 };
 
 const giftExchangeStatus = async (payload) => {

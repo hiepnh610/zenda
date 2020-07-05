@@ -36,7 +36,8 @@ const giftExchange = async (payload) => {
           {
             display_name: getUserInfo.display_name,
             gift_name: getGiftInfo.name,
-            status: false
+            status: false,
+            user_request_id: user_id
           },
           { transaction }
         );
