@@ -1,3 +1,6 @@
+const { Op } = require("sequelize");
+const moment = require('moment');
+
 const DB = require("../models");
 const User = DB.User;
 const Transaction = DB.Transaction;
@@ -57,7 +60,31 @@ const removeTransaction = async (transactionId) => {
   };
 };
 
+const getTopGivePointsUser = async () => {
+  try {
+    const dateFormat = 'YYYY-MM-DD HH:mm:ss';
+    const startOfMonth = moment().startOf('month').format(dateFormat);
+    const endOfMonth   = moment().endOf('month').format(dateFormat);
+
+    const query = {
+      where: {
+        createdAt: {
+          [Op.gte]: startOfMonth,
+          [Op.lte]: endOfMonth
+        }
+      }
+    };
+
+    const transactions = await Transaction.findAll(query);
+
+    return transactions;
+  } catch (error) {
+    return { error };
+  };
+};
+
 module.exports = {
   getTransactionList,
-  removeTransaction
+  removeTransaction,
+  getTopGivePointsUser
 };

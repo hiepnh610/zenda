@@ -67,7 +67,11 @@ router
   .delete(auth.verifyToken, exchange.removeGiftExchange);
 
 router
-  .route('/top-points')
+  .route('/top-receive-points')
   .get(auth.verifyToken, chart.getTopUserHasHighestPoints);
+
+router
+  .route('/top-give-points')
+  .get(auth.verifyToken, chart.getTopGivePointsUser);
 
 module.exports = router;
