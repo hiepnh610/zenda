@@ -8,7 +8,7 @@ const getChannelInfo = async () => {
   const channelList = await web.conversations.list();
 
   return channelList.channels
-    .filter((channel) => channel.name === 'bimbim');
+    .filter((channel) => channel.name === CONSTANTS.SLACK_CHANNEL);
 };
 
 const inviteUserToChannel = (channelId, userId) => {
