@@ -60,7 +60,7 @@ const giftExchange = async (payload) => {
   if (giftExchangeData && !giftExchangeData.error) {
     const dataToSendMessage = {
       user_request_id: userId,
-      message: `<@${userId}> đã gửi yêu cầu đổi quà.`
+      message: `<@${userId}> đã gửi yêu cầu đổi món quà là ${giftInfo.name}.`
     };
 
     setTimeout(() => {
