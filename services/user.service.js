@@ -150,14 +150,21 @@ const updateUserBag = async (payload) => {
       } = giftTransaction;
       const userMessage = giftTransaction.message;
       const message = `<@${user_request_id}> đã gửi tặng <@${user_receive_id}> *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
+      const directMessage = `<@${user_request_id}> đã gửi tặng bạn *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
 
-      const dataToSendMessage = {
+      const dataToSendMessageToChannel = {
         user_request_id,
         user_receive_id,
         message
       };
 
-      slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
+      const dataToSendDirectMessage = {
+        user_request_id,
+        message
+      };
+
+      slackUtil.conversation.sendMessageToChannel(dataToSendMessageToChannel);
+      slackUtil.conversation.sendDirectMessage(dataToSendDirectMessage);
     }
 
     return giftTransaction;

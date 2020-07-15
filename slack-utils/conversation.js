@@ -38,6 +38,29 @@ const checkUserInChannel = async (channelId, userList) => {
   }
 };
 
+const sendDirectMessage = async (dataToSendMessage) => {
+  const {
+    user_request_id,
+    message
+  } = dataToSendMessage;
+
+  const params = {
+    channel: user_request_id,
+    text: '',
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: message
+        },
+      },
+    ],
+  };
+
+  await web.chat.postMessage(params);
+};
+
 const sendMessageToChannel = async (dataToSendMessage) => {
   const targetChannel = await getChannelInfo();
 
@@ -80,5 +103,6 @@ const sendMessageToChannel = async (dataToSendMessage) => {
 
 module.exports = {
   checkUserInChannel,
-  sendMessageToChannel
+  sendMessageToChannel,
+  sendDirectMessage
 };
