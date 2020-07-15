@@ -150,7 +150,8 @@ const updateUserBag = async (payload) => {
       } = giftTransaction;
       const userMessage = giftTransaction.message;
       const message = `<@${user_request_id}> đã gửi tặng <@${user_receive_id}> *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
-      const directMessage = `<@${user_request_id}> đã gửi tặng bạn *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
+      const directMessageToRequestUser = `Bạn đã gửi tặng <@${user_receive_id}> *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
+      const directMessageToReceiveUser = `<@${user_request_id}> đã gửi tặng bạn *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
 
       const dataToSendMessageToChannel = {
         user_request_id,
@@ -160,7 +161,9 @@ const updateUserBag = async (payload) => {
 
       const dataToSendDirectMessage = {
         user_request_id,
-        message
+        user_receive_id,
+        directMessageToRequestUser,
+        directMessageToReceiveUser
       };
 
       slackUtil.conversation.sendMessageToChannel(dataToSendMessageToChannel);

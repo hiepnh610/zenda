@@ -41,10 +41,12 @@ const checkUserInChannel = async (channelId, userList) => {
 const sendDirectMessage = async (dataToSendMessage) => {
   const {
     user_request_id,
-    message
+    user_receive_id,
+    directMessageToRequestUser,
+    directMessageToReceiveUser
   } = dataToSendMessage;
 
-  const params = {
+  const paramsToSendMessageToRequestUser = {
     channel: user_request_id,
     text: '',
     blocks: [
@@ -52,13 +54,28 @@ const sendDirectMessage = async (dataToSendMessage) => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: message
+          text: directMessageToRequestUser
         },
       },
     ],
   };
 
-  await web.chat.postMessage(params);
+  const paramsToSendMessageToReceiveUser = {
+    channel: user_receive_id,
+    text: '',
+    blocks: [
+      {
+        type: 'section',
+        text: {
+          type: 'mrkdwn',
+          text: directMessageToReceiveUser
+        },
+      },
+    ],
+  };
+
+  await web.chat.postMessage(paramsToSendMessageToRequestUser);
+  await web.chat.postMessage(paramsToSendMessageToReceiveUser);
 };
 
 const sendMessageToChannel = async (dataToSendMessage) => {
