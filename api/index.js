@@ -12,7 +12,7 @@ const auth = require('../auth');
 
 router
   .route('/interactive')
-  .post(interactive);
+  .post(auth.signSlackVerification, interactive);
 
 router
   .route('/login')
