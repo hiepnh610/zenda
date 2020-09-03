@@ -6,7 +6,7 @@ const giveTemplate = (giveBag) => {
     callback_id: MODAL_CALLBACK_ID.GIVE,
     title: {
       type: 'plain_text',
-      text: 'Bimbim',
+      text: 'star',
     },
     submit: {
       type: 'plain_text',
@@ -23,7 +23,7 @@ const giveTemplate = (giveBag) => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `Số bimbim bạn có thể tặng: *${giveBag}* bimbim`,
+          text: `Số star bạn có thể tặng: *${giveBag}* star`,
         },
       },
       {
@@ -33,7 +33,7 @@ const giveTemplate = (giveBag) => {
           action_id: 'amount',
           placeholder: {
             type: 'plain_text',
-            text: 'Số bimbim muốn gửi tặng.',
+            text: 'Số star muốn gửi tặng.',
           },
         },
         label: {

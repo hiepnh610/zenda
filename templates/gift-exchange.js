@@ -23,7 +23,7 @@ const giftExchangeTemplate = (options, points) => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `Số bimbim bạn có thể đổi quà: *${points}* bimbim`,
+          text: `Số star bạn có thể đổi quà: *${points}* star`,
         },
       },
       {

@@ -34,6 +34,8 @@ const signSlackVerification = (req, res, next) => {
       )
     ) {
       next();
+
+      return;
     }
 
     return res.status(400).send('Verification failed');

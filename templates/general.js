@@ -3,7 +3,7 @@ const generalTemplate = (message) => {
     type: 'modal',
     title: {
       type: 'plain_text',
-      text: 'Bimbim',
+      text: 'Star',
     },
     close: {
       type: 'plain_text',

@@ -17,7 +17,7 @@ const userController = require('./controllers/user.controller');
 
 const limiter = new RateLimit({
   windowMs: 1000,
-  max: 5
+  max: 10
 });
 
 app.use(cors());
@@ -42,6 +42,10 @@ cron.schedule('0 0 1 * *', () => {
 
 cron.schedule('0 0 * * *', () => {
   userController.updateUserName();
+
+  console.log('-'.repeat(79));
+  console.log('Update Username');
+  console.log('-'.repeat(79));
 }, {
   scheduled: true,
   timezone: 'Asia/Bangkok'

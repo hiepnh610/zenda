@@ -1,5 +1,5 @@
 {
-  "name": "zenda",
+  "name": "bimbim",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hiepnh610/zenda.git"
+    "url": "git+https://gitlab.id.vin/general/bimbim.git"
   },
   "author": "Hiep Nguyen",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hiepnh610/zenda/issues"
+    "url": "https://gitlab.id.vin/general/bimbim"
   },
-  "homepage": "https://github.com/hiepnh610/zenda#readme",
+  "homepage": "https://gitlab.id.vin/general/bimbim#readme",
   "dependencies": {
     "@slack/web-api": "^5.9.0",
     "bcrypt": "^5.0.0",

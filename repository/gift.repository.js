@@ -1,13 +1,13 @@
 const DB = require("../models");
 const Gift = DB.Gift;
 
-const getGiftsList = async (offset) => {
+const getGiftsList = async (offset, limit) => {
   try {
     let query = {};
 
-    if (offset) {
+    if (offset && limit) {
       query = {
-        limit: 5,
+        limit: parseInt(limit),
         offset: parseInt(offset)
       };
     }

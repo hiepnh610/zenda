@@ -60,7 +60,8 @@ const giftExchange = async (payload) => {
   if (giftExchangeData && !giftExchangeData.error) {
     const dataToSendMessage = {
       user_request_id: userId,
-      message: `<@${userId}> đã gửi yêu cầu đổi món quà là ${giftInfo.name}.`
+      message: `<@${userId}> đã gửi yêu cầu đổi món quà là ${giftInfo.name}.`,
+      notification: `<@${userId}> đã gửi yêu cầu đổi món quà là ${giftInfo.name}.`
     };
 
     setTimeout(() => {
@@ -73,8 +74,8 @@ const giftExchange = async (payload) => {
   }
 };
 
-const giftExchangeList = async (offset) => {
-  const exchanges = await giftExchangeRepository.giftExchangeList(offset);
+const giftExchangeList = async (offset, limit) => {
+  const exchanges = await giftExchangeRepository.giftExchangeList(offset, limit);
   const users = await userRepository.getUserList();
 
   const newRows = exchanges.rows.map((exchange) => {

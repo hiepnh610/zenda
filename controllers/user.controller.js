@@ -8,19 +8,43 @@ const getUserList = async (req, res) => {
 
   const logData = {};
 
-  const offset = req.query.offset || '';
+  const offset = req.query.offset;
+  const limit = req.query.limit;
+  const searchValue = req.query.display_name || ''
 
-  const users = await userService.getUserList(offset);
+  if (!offset) {
+    const message = 'Offset cannot be empty.';
 
-  if (!users) {
     logData.execution_time = perf.stop('apiCall').words;
-    logData.msg = "Error happened.";
+    logData.msg = message;
 
     UTILS.logging.error(req, logData);
 
-    res.status(400).json({ message: 'Error happened.' });
+    return res.status(400).json({ message: 'Offset cannot be empty.' });
+  }
 
-    return;
+  if (!limit) {
+    const message = 'Limit cannot be empty.';
+
+    logData.execution_time = perf.stop('apiCall').words;
+    logData.msg = message;
+
+    UTILS.logging.error(req, logData);
+
+    return res.status(400).json({ message: 'Limit cannot be empty.' });
+  }
+
+  const users = await userService.getUserList(offset, limit, searchValue);
+
+  if (!users) {
+    const message = 'Error happened.';
+
+    logData.execution_time = perf.stop('apiCall').words;
+    logData.msg = message;
+
+    UTILS.logging.error(req, logData);
+
+    return res.status(400).json({ message });
   }
 
   if (users && users.error) {
@@ -29,9 +53,7 @@ const getUserList = async (req, res) => {
 
     UTILS.logging.error(req, logData);
 
-    res.status(400).json({ message: users.error });
-
-    return;
+    return res.status(400).json({ message: users.error });
   }
 
   logData.execution_time = perf.stop('apiCall').words;
@@ -39,7 +61,7 @@ const getUserList = async (req, res) => {
 
   UTILS.logging.info(req, logData);
 
-  res.status(200).json(users);
+  return res.status(200).json(users);
 };
 
 const updatePointsAllUser = async () => {

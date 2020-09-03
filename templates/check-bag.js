@@ -18,14 +18,14 @@ const checkBagTemplate = (giveBag, receiveBag) => {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `Số bimbim bạn có thể cho: *${giveBag}* bimbim`,
+          text: `Số star bạn có thể cho: *${giveBag}* star`,
         }
       },
       {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `Số bimbim bạn đã được tặng: *${receiveBag}* bimbim`,
+          text: `Số star bạn đã được tặng: *${receiveBag}* star`,
         }
       }
     ]
