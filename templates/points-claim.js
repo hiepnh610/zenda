@@ -5,11 +5,11 @@ const pointsClaimTemplate = {
   callback_id: MODAL_CALLBACK_ID.CLAIM,
   title: {
     type: 'plain_text',
-    text: 'Đòi Bimbim'
+    text: 'Đòi star'
   },
   submit: {
     type: 'plain_text',
-    text: 'Đòi bimbim',
+    text: 'Đòi star',
     emoji: true
   },
   close: {
@@ -25,7 +25,7 @@ const pointsClaimTemplate = {
         action_id: 'amount',
         placeholder: {
           type: 'plain_text',
-          text: 'Số bimbim muốn đòi.',
+          text: 'Số star muốn đòi.',
         },
       },
       label: {
@@ -41,13 +41,13 @@ const pointsClaimTemplate = {
         action_id: 'user_receive',
         placeholder: {
           type: 'plain_text',
-          text: 'Chọn đồng nghiệp bạn muốn đòi bimbim.',
+          text: 'Chọn đồng nghiệp bạn muốn đòi star.',
           emoji: true,
         },
       },
       label: {
         type: 'plain_text',
-        text: 'Bạn muốn đòi bimbim từ ai?',
+        text: 'Bạn muốn đòi star từ ai?',
       },
     },
 

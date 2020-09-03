@@ -50,9 +50,32 @@ const giftExchangeList = async (req, res) => {
   perf.start('apiCall');
 
   const logData = {};
-  const offset = req.query.offset || '';
+  const offset = req.query.offset;
+  const limit = req.query.limit;
 
-  const exchangeList = await giftExchangeService.giftExchangeList(offset);
+  if (!offset) {
+    const message = 'Offset cannot be empty.';
+
+    logData.execution_time = perf.stop('apiCall').words;
+    logData.msg = message;
+
+    UTILS.logging.error(req, logData);
+
+    return res.status(400).json({ message: 'Offset cannot be empty.' });
+  }
+
+  if (!limit) {
+    const message = 'Limit cannot be empty.';
+
+    logData.execution_time = perf.stop('apiCall').words;
+    logData.msg = message;
+
+    UTILS.logging.error(req, logData);
+
+    return res.status(400).json({ message: 'Limit cannot be empty.' });
+  }
+
+  const exchangeList = await giftExchangeService.giftExchangeList(offset, limit);
 
   if (exchangeList && exchangeList.error) {
     logData.execution_time = perf.stop('apiCall').words;

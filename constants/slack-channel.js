@@ -1,4 +1,4 @@
-const SLACK_CHANNEL = 'bimbim-channel';
+const SLACK_CHANNEL = 'bimbim-room';
 
 module.exports = {
   SLACK_CHANNEL

@@ -87,7 +87,7 @@ const showModal = async (req, res) => {
       const filterGift = gifts.rows.filter(gift => gift.quantity > 0);
 
       const radioOptions = filterGift.map((gift) => {
-        const text = `*${gift.name}*\n_số lượng còn lại: ${gift.quantity}_\n_Số bimbim cần đổi: ${gift.points}_`;
+        const text = `*${gift.name}*\n_số lượng còn lại: ${gift.quantity}_\n_Số star cần đổi: ${gift.points}_`;
 
         return {
           value: gift.id.toString(),

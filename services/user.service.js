@@ -149,21 +149,30 @@ const updateUserBag = async (payload) => {
         amount
       } = giftTransaction;
       const userMessage = giftTransaction.message;
-      const message = `<@${user_request_id}> đã gửi tặng <@${user_receive_id}> *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
-      const directMessageToRequestUser = `Bạn đã gửi tặng <@${user_receive_id}> *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
-      const directMessageToReceiveUser = `<@${user_request_id}> đã gửi tặng bạn *${amount}* bimbim. Với lời nhắn: \n>${userMessage}`;
+
+      const message = `<@${user_request_id}> đã gửi tặng <@${user_receive_id}> *${amount}* star. Với lời nhắn: \n>${userMessage}`;
+      const notification = `<@${user_request_id}> đã gửi tặng <@${user_receive_id}> ${amount} star. Với lời nhắn: ${userMessage}`;
+
+      const directMessageToRequestUser = `Bạn đã gửi tặng <@${user_receive_id}> *${amount}* star. Với lời nhắn: \n>${userMessage}`;
+      const notificationDirectMessageToRequestUser = `Bạn đã gửi tặng <@${user_receive_id}> ${amount} star. Với lời nhắn: ${userMessage}`;
+
+      const directMessageToReceiveUser = `<@${user_request_id}> đã gửi tặng bạn *${amount}* star. Với lời nhắn: \n>${userMessage}`;
+      const notificationDirectMessageToReceiveUser = `<@${user_request_id}> đã gửi tặng bạn ${amount} star. Với lời nhắn: ${userMessage}`;
 
       const dataToSendMessageToChannel = {
         user_request_id,
         user_receive_id,
-        message
+        message,
+        notification
       };
 
       const dataToSendDirectMessage = {
         user_request_id,
         user_receive_id,
         directMessageToRequestUser,
-        directMessageToReceiveUser
+        directMessageToReceiveUser,
+        notificationDirectMessageToRequestUser,
+        notificationDirectMessageToReceiveUser
       };
 
       slackUtil.conversation.sendMessageToChannel(dataToSendMessageToChannel);
@@ -174,7 +183,7 @@ const updateUserBag = async (payload) => {
   }
 };
 
-const pointsClaim = (payload) => {
+const pointsClaim = async (payload) => {
   const modal = {
     "trigger_id": payload.trigger_id
   };
@@ -185,13 +194,47 @@ const pointsClaim = (payload) => {
   const userIdReceive = UTILS.findValue(valuesRequest, 'user_receive').selected_user;
   const pointsAmount = parseInt(UTILS.findValue(valuesRequest, 'amount').value);
   const userMessage = UTILS.findValue(valuesRequest, 'message').value;
-  const message = `<@${userIdRequest}> đã đòi <@${userIdReceive}> *${pointsAmount}* bimbim. Với lời nhắn: \n>${userMessage}`;
+  const message = `<@${userIdRequest}> đã đòi <@${userIdReceive}> *${pointsAmount}* star. Với lời nhắn: \n>${userMessage}`;
 
   const amountIsInteger = Number.isInteger(pointsAmount);
 
   if (!amountIsInteger || pointsAmount <= 0) {
     setTimeout(() => {
       modal.view = generalTemplate(CONSTANTS.MESSAGES.POINT_IS_NAN);
+
+      web.views.open(modal);
+    }, 1000);
+
+    return;
+  }
+
+  const userIsValid = await checkUserIsValid(userIdReceive);
+
+  if (userIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_DEACTIVATED) {
+    setTimeout(() => {
+      modal.view = generalTemplate(
+        CONSTANTS.MESSAGES.NOT_CLAIM_TO_DEACTIVATE_USER
+      );
+
+      web.views.open(modal);
+    }, 1000);
+
+    return;
+  }
+
+  if (userIsValid.error === CONSTANTS.SLACK_USER_STATUS.USER_NOT_HUMAN) {
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_CLAIM_TO_BOT);
+
+      web.views.open(modal);
+    }, 1000);
+
+    return;
+  }
+
+  if (userIdRequest === userIdReceive) {
+    setTimeout(() => {
+      modal.view = generalTemplate(CONSTANTS.MESSAGES.NOT_CLAIM_TO_SELF);
 
       web.views.open(modal);
     }, 1000);
@@ -208,10 +251,8 @@ const pointsClaim = (payload) => {
   slackUtil.conversation.sendMessageToChannel(dataToSendMessage);
 };
 
-const getUserList = async (offset) => {
-  const users = await userRepository.getUserList(offset);
-
-  return users;
+const getUserList = async (offset, limit, searchValue) => {
+  return await userRepository.getUserList(offset, limit, searchValue);
 };
 
 const updatePointsAllUser = async () => {
@@ -219,7 +260,7 @@ const updatePointsAllUser = async () => {
 
   if (updateUsers && !updateUsers.error) {
     const payload = {
-      message: `<!channel> Số lượng bimbim trong túi cho đã được reset.`
+      message: `<!channel> Số lượng star trong túi cho đã được reset.`
     };
     slackUtil.conversation.sendMessageToChannel(payload);
   }

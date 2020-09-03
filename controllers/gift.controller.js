@@ -7,19 +7,41 @@ const getGiftsList = async (req, res) => {
   perf.start('apiCall');
 
   const logData = {};
-  const offset = req.query.offset || '';
 
-  const gifts = await giftService.getGiftsList(offset);
+  const offset = req.query.offset;
+  const limit = req.query.limit;
+
+  if (!offset) {
+    const message = 'Offset cannot be empty.';
+
+    logData.execution_time = perf.stop('apiCall').words;
+    logData.msg = message;
+    UTILS.logging.info(req, logData);
+
+    return res.status(400).json({ message });
+  }
+
+  if (!limit) {
+    const message = 'Limit cannot be empty.';
+
+    logData.execution_time = perf.stop('apiCall').words;
+    logData.msg = message;
+    UTILS.logging.info(req, logData);
+
+    return res.status(400).json({ message });
+  }
+
+  const gifts = await giftService.getGiftsList(offset, limit);
 
   if (!gifts) {
+    const message = 'Error happened.';
+
     logData.execution_time = perf.stop('apiCall').words;
-    logData.msg = "Error happened.";
+    logData.msg = message;
 
     UTILS.logging.error(req, logData);
 
-    res.status(400).json({ message: 'Error happened.' });
-
-    return;
+    return res.status(400).json({ message });
   }
 
   if (gifts && gifts.error) {
@@ -28,9 +50,7 @@ const getGiftsList = async (req, res) => {
 
     UTILS.logging.error(req, logData);
 
-    res.status(400).json({ message: gifts.error });
-
-    return;
+    return res.status(400).json({ message: gifts.error });
   }
 
   logData.execution_time = perf.stop('apiCall').words;

@@ -1,3 +1,5 @@
+const Op = require('sequelize').Op;
+
 const DB = require("../models");
 const User = DB.User;
 const Transaction = DB.Transaction;
@@ -74,18 +76,25 @@ const updateUserBag = async (giveData) => {
   }
 };
 
-const getUserList = async (offset) => {
+const getUserList = async (offset, limit, searchValue) => {
   try {
     let query = {};
 
-    if (offset) {
+    if (offset && limit) {
       query = {
-        limit: 5,
+        where: {
+          display_name: {
+            [Op.like]: `%${searchValue}%`
+          }
+        },
+        limit: parseInt(limit),
         offset: parseInt(offset)
       }
     }
 
-    return await User.findAndCountAll(query);
+    const users = await User.findAndCountAll(query);
+
+    return users;
   } catch (error) {
     return { error };
   }
@@ -141,7 +150,7 @@ const updateUserName = async (userData) => {
 const getTopUserHasHighestPoints = async () => {
   try {
     return await User.findAndCountAll({
-      limit: 10,
+      limit: 5,
       order: [['receive_bag', 'DESC']]
     });
   } catch (error) {

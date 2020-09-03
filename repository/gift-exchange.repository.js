@@ -48,18 +48,14 @@ const giftExchange = async (payload) => {
   }
 };
 
-const giftExchangeList = async (offset) => {
-  let query = {};
-
-  if (offset) {
-    query = {
-      limit: 5,
+const giftExchangeList = async (offset, limit) => {
+  try {
+    let query = {
+      limit: parseInt(limit),
       offset: parseInt(offset),
       order: [['updatedAt', 'DESC']]
     };
-  }
 
-  try {
     return await Exchange.findAndCountAll(query);
   } catch (error) {
     return { error };
